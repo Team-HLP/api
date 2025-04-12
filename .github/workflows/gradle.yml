@@ -2,9 +2,7 @@ name: Deploy to EC2 on develop push
 
 on:
   push:
-    branches: [ "develop" ]
-  pull_request:
-    branches: [ "develop" ]
+    branches: [ "main" ]
 
 jobs:
   deploy:
