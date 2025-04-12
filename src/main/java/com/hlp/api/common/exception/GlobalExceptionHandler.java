@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.hlp.api.common.exception.custom.AuthenticationException;
 import com.hlp.api.common.exception.custom.DataNotFoundException;
 import com.hlp.api.common.exception.custom.DuplicationException;
 
@@ -22,6 +23,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DuplicationException.class)
     public ResponseEntity<Object> handleDuplicationException(DuplicationException e) {
         return buildErrorResponse(BAD_REQUEST, e.getDetail());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException e) {
+        return buildErrorResponse(UNAUTHORIZED, e.getDetail());
     }
 
     private ResponseEntity<Object> buildErrorResponse(HttpStatus httpStatus, String message) {
