@@ -47,6 +47,9 @@ jobs:
         with:
           name: deploy
 
+      - name: Compress JAR file
+        run: tar -czf app.tar.gz *.jar
+
       - name: Add SSH Key
         uses: webfactory/ssh-agent@v0.5.4
         with:
@@ -55,16 +58,19 @@ jobs:
       - name: Add EC2 Host to known_hosts
         run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      - name: SCP Transfer to Remote
-        run: scp *.jar ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/api
+      - name: SCP Transfer to Remote (Compressed)
+        run: scp app.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/api
 
       - name: Restart Server
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} <<EOF
             echo "▶ Killing existing process on port 8080"
             sudo fuser -k 8080/tcp || true
-          
-            echo "▶ Starting new JAR"
+
+            echo "▶ Extracting app.tar.gz"
             cd ~/api
-            sudo nohup java -jar *.jar 2>&1 | tee app.log &
+            tar -xzf app.tar.gz
+
+            echo "▶ Starting new JAR"
+            sudo nohup java -jar ${{ secrets.JAR_FILE }}.jar 2>&1 | tee app.log &
           EOF
