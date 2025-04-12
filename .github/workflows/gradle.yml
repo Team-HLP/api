@@ -1,4 +1,4 @@
-name: Java CI with Gradle
+name: Deploy to EC2 on develop push
 
 on:
   push:
@@ -7,49 +7,10 @@ on:
     branches: [ "develop" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Set application.yml
-        run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Build with Gradle
-        run: ./gradlew build --exclude-task test
-
-      - name: Upload JAR Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: deploy
-          path: build/libs/*.jar
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: deploy
-
-      - name: Compress JAR file
-        run: tar -czf app.tar.gz *.jar
-
       - name: Add SSH Key
         uses: webfactory/ssh-agent@v0.5.4
         with:
@@ -58,19 +19,5 @@ jobs:
       - name: Add EC2 Host to known_hosts
         run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      - name: SCP Transfer to Remote (Compressed)
-        run: scp app.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:~/api
-
-      - name: Restart Server
-        run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} <<EOF
-            echo "▶ Killing existing process on port 8080"
-            sudo fuser -k 8080/tcp || true
-
-            echo "▶ Extracting app.tar.gz"
-            cd ~/api
-            tar -xzf app.tar.gz
-
-            echo "▶ Starting new JAR"
-            sudo nohup java -jar ${{ secrets.JAR_FILE }}.jar 2>&1 | tee app.log &
-          EOF
+      - name: Run deploy.sh on EC2
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "bash /home/ubuntu/deploy.sh"
