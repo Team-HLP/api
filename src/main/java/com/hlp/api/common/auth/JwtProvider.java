@@ -57,7 +57,7 @@ public class JwtProvider {
                 .toString();
             return Integer.parseInt(userId);
         } catch (JwtException e) {
-            throw new InvalidJwtException("유효하지 않은 JWT 토큰입니다.", e.getMessage());
+            throw new InvalidJwtException("유효하지 않은 JWT 토큰입니다.");
         }
     }
 
