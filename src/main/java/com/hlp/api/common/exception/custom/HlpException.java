@@ -9,6 +9,6 @@ public abstract class HlpException extends RuntimeException {
     }
 
     public String getDetail() {
-        return String.format("%s %s", getMessage(), detail);
+        return String.format("%s", detail);
     }
 }
