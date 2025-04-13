@@ -1,6 +1,9 @@
 package com.hlp.api.domain.game.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,5 +29,13 @@ public class GameController implements GameApi{
     ) {
         GameResponse response = gameService.createGame(request, userId);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/games")
+    public ResponseEntity<List<GameResponse>> getGames(
+        @UserAuth Integer userId
+    ) {
+        List<GameResponse> responses = gameService.getGames(userId);
+        return ResponseEntity.ok(responses);
     }
 }

@@ -1,5 +1,8 @@
 package com.hlp.api.domain.game.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,5 +28,11 @@ public class GameService {
         User user = userRepository.getById(userId);
         Game game = request.toEntity(user);
         return GameResponse.of(gameRepository.save(game));
+    }
+
+    public List<GameResponse> getGames(Integer userId) {
+        User user = userRepository.getById(userId);
+        List<Game> games = gameRepository.findAllByUserId(userId);
+        return games.stream().map(GameResponse::of).collect(Collectors.toList());
     }
 }
