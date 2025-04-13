@@ -1,4 +1,4 @@
-package com.hlp.api.common.auth;
+package com.hlp.api.common.auth.admin;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import com.hlp.api.common.auth.JwtProvider;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

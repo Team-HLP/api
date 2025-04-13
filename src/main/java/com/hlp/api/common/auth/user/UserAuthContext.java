@@ -1,4 +1,4 @@
-package com.hlp.api.common.auth;
+package com.hlp.api.common.auth.user;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Component
 @RequestScope
-public class AdminAuthContext {
+public class UserAuthContext {
 
     private Integer userId;
 

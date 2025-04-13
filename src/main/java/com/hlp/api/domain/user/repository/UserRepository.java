@@ -22,4 +22,11 @@ public interface UserRepository extends Repository<User, Long> {
     Integer count();
 
     List<User> findAll();
+
+    Optional<User> findById(Integer id);
+
+    default User getById(Integer id) {
+        return findById(id)
+            .orElseThrow(() -> new UserNotFoundException("user id : " + id));
+    }
 }

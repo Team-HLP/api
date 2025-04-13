@@ -1,4 +1,4 @@
-package com.hlp.api.common.auth;
+package com.hlp.api.common.auth.user;
 
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -11,5 +11,5 @@ import io.swagger.v3.oas.annotations.Hidden;
 @Hidden
 @Target(value = PARAMETER)
 @Retention(RUNTIME)
-public @interface AdminAuth {
+public @interface UserAuth {
 }

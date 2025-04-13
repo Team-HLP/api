@@ -15,7 +15,7 @@ import com.hlp.api.admin.user.dto.response.AdminLoginResponse;
 import com.hlp.api.admin.user.dto.response.UserProvideResponse;
 import com.hlp.api.admin.user.dto.response.UserResponse;
 import com.hlp.api.admin.user.service.AdminUserService;
-import com.hlp.api.common.auth.AdminAuth;
+import com.hlp.api.common.auth.admin.AdminAuth;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
