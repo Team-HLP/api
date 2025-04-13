@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hlp.api.common.auth.user.UserAuth;
 import com.hlp.api.domain.game.dto.request.GameCreateRequest;
+import com.hlp.api.domain.game.dto.response.GameResponse;
 import com.hlp.api.domain.game.service.GameService;
 
 import jakarta.validation.Valid;
@@ -14,16 +15,16 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-public class GameController {
+public class GameController implements GameApi{
 
     private final GameService gameService;
 
     @PostMapping("/game")
-    public ResponseEntity<Void> createGame(
+    public ResponseEntity<GameResponse> createGame(
         @RequestBody @Valid GameCreateRequest request,
         @UserAuth Integer userId
     ) {
-        gameService.createGame(request, userId);
-        return ResponseEntity.ok().build();
+        GameResponse response = gameService.createGame(request, userId);
+        return ResponseEntity.ok(response);
     }
 }

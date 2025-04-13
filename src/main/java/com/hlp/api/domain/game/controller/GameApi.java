@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.hlp.api.common.auth.user.UserAuth;
 import com.hlp.api.domain.game.dto.request.GameCreateRequest;
+import com.hlp.api.domain.game.dto.response.GameResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,7 +29,7 @@ public interface GameApi {
     )
     @Operation(summary = "게임 정보 생성")
     @PostMapping("/game")
-    ResponseEntity<Void> createGame(
+    ResponseEntity<GameResponse> createGame(
         @RequestBody @Valid GameCreateRequest request,
         @UserAuth Integer userId
     );
