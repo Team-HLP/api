@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.hlp.api.admin.user.dto.request.AdminLoginRequest;
 import com.hlp.api.admin.user.dto.request.AdminRegisterRequest;
+import com.hlp.api.admin.user.dto.request.UserProvideRequest;
 import com.hlp.api.admin.user.dto.response.AdminLoginResponse;
+import com.hlp.api.admin.user.dto.response.UserProvideResponse;
+import com.hlp.api.common.auth.AdminAuth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -47,5 +50,20 @@ public interface AdminUserApi {
     @PostMapping("/register")
     ResponseEntity<Void> register(
         @RequestBody @Valid AdminRegisterRequest request
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "유저 아이디 발급")
+    @PostMapping("/provide")
+    ResponseEntity<UserProvideResponse> provide(
+        @RequestBody @Valid UserProvideRequest request,
+        @AdminAuth Integer adminId
     );
 }

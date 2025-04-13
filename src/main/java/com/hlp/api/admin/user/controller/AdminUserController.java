@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hlp.api.admin.user.dto.request.AdminLoginRequest;
 import com.hlp.api.admin.user.dto.request.AdminRegisterRequest;
+import com.hlp.api.admin.user.dto.request.UserProvideRequest;
 import com.hlp.api.admin.user.dto.response.AdminLoginResponse;
+import com.hlp.api.admin.user.dto.response.UserProvideResponse;
 import com.hlp.api.admin.user.service.AdminUserService;
+import com.hlp.api.common.auth.AdminAuth;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +38,14 @@ public class AdminUserController implements AdminUserApi {
     ) {
         adminUserService.register(request);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/provide")
+    public ResponseEntity<UserProvideResponse> provide(
+        @RequestBody @Valid UserProvideRequest request,
+        @AdminAuth Integer adminId
+    ) {
+        UserProvideResponse response = adminUserService.provide(request);
+        return ResponseEntity.ok(response);
     }
 }

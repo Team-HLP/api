@@ -8,10 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hlp.api.admin.user.dto.request.AdminLoginRequest;
 import com.hlp.api.admin.user.dto.request.AdminRegisterRequest;
+import com.hlp.api.admin.user.dto.request.UserProvideRequest;
 import com.hlp.api.admin.user.dto.response.AdminLoginResponse;
+import com.hlp.api.admin.user.dto.response.UserProvideResponse;
 import com.hlp.api.admin.user.model.Admin;
 import com.hlp.api.admin.user.repository.AdminUserRepository;
 import com.hlp.api.common.auth.JwtProvider;
+import com.hlp.api.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +25,7 @@ public class AdminUserService {
 
     private final AdminUserRepository adminUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
 
     @Transactional
@@ -36,5 +40,15 @@ public class AdminUserService {
     public void register(AdminRegisterRequest request) {
         Admin admin = request.toEntity(passwordEncoder.encode(request.password()));
         adminUserRepository.save(admin);
+    }
+
+    @Transactional
+    public UserProvideResponse provide(UserProvideRequest request) {
+        String password = passwordEncoder.encode(request.phoneNumber());
+        Integer count = userRepository.count();
+        String loginId = String.format("user%05d", count + 1);
+        userRepository.save(request.toEntity(loginId, password));
+
+        return UserProvideResponse.of(loginId);
     }
 }

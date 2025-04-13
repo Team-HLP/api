@@ -15,4 +15,8 @@ public interface UserRepository extends Repository<User, Long> {
         return findByLoginId(loginId)
             .orElseThrow(() -> new UserNotFoundException("등록되지 않은 아이디입니다"));
     }
+
+    void save(User user);
+
+    Integer count();
 }
