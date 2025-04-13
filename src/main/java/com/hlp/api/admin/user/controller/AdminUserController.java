@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hlp.api.admin.user.dto.request.AdminLoginRequest;
+import com.hlp.api.admin.user.dto.request.AdminRegisterRequest;
 import com.hlp.api.admin.user.dto.response.AdminLoginResponse;
 import com.hlp.api.admin.user.service.AdminUserService;
 
@@ -26,5 +27,13 @@ public class AdminUserController implements AdminUserApi {
     ) {
         AdminLoginResponse response = adminUserService.login(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<Void> register(
+        @RequestBody @Valid AdminRegisterRequest request
+    ) {
+        adminUserService.register(request);
+        return ResponseEntity.ok().build();
     }
 }

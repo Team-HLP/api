@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hlp.api.admin.user.dto.request.AdminLoginRequest;
+import com.hlp.api.admin.user.dto.request.AdminRegisterRequest;
 import com.hlp.api.admin.user.dto.response.AdminLoginResponse;
 import com.hlp.api.admin.user.model.Admin;
 import com.hlp.api.admin.user.repository.AdminUserRepository;
@@ -29,5 +30,11 @@ public class AdminUserService {
         checkPasswordMatches(passwordEncoder, request.password(), admin.getPassword());
         String accessToken = jwtProvider.createToken(admin);
         return AdminLoginResponse.of(accessToken);
+    }
+
+    @Transactional
+    public void register(AdminRegisterRequest request) {
+        Admin admin = request.toEntity(passwordEncoder.encode(request.password()));
+        adminUserRepository.save(admin);
     }
 }

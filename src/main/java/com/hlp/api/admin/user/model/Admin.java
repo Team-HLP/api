@@ -36,6 +36,10 @@ public class Admin extends BaseEntity {
     private String password;
 
     @NotNull
+    @Column(name = "is_auth", nullable = false)
+    private Boolean isAuth;
+
+    @NotNull
     @Size(max = 20)
     @Column(name = "name", nullable = false)
     private String name;
@@ -50,12 +54,14 @@ public class Admin extends BaseEntity {
         Integer id,
         String loginId,
         String password,
+        Boolean isAuth,
         String name,
         String phoneNumber
     ) {
         this.id = id;
         this.loginId = loginId;
         this.password = password;
+        this.isAuth = isAuth;
         this.name = name;
         this.phoneNumber = phoneNumber;
     }
