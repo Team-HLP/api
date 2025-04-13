@@ -18,7 +18,6 @@ import com.hlp.api.admin.user.service.AdminUserService;
 import com.hlp.api.common.auth.AdminAuth;
 
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
