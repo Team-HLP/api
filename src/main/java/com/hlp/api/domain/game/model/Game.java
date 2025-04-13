@@ -1,5 +1,6 @@
 package com.hlp.api.domain.game.model;
 
+import static jakarta.persistence.EnumType.*;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -9,6 +10,8 @@ import com.hlp.api.domain.user.model.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -28,6 +31,19 @@ public class Game extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
+
+    @NotNull
+    @Enumerated(STRING)
+    @Column(name = "result", nullable = false)
+    private Result result;
+
+    @NotNull
+    @Column(name = "score", nullable = false)
+    private Integer score;
+
+    @NotNull
+    @Column(name = "hp", nullable = false)
+    private Integer hp;
 
     @NotNull
     @Column(name = "meteorite_broken_count", nullable = false)
@@ -52,6 +68,9 @@ public class Game extends BaseEntity {
     @Builder
     private Game(
         Integer id,
+        Result result,
+        Integer score,
+        Integer hp,
         Integer meteoriteBrokenCount,
         Integer blinkEyeCount,
         Float avgLeftEyePupilSize,
@@ -59,6 +78,9 @@ public class Game extends BaseEntity {
         User user
     ) {
         this.id = id;
+        this.result = result;
+        this.score = score;
+        this.hp = hp;
         this.meteoriteBrokenCount = meteoriteBrokenCount;
         this.blinkEyeCount = blinkEyeCount;
         this.avgLeftEyePupilSize = avgLeftEyePupilSize;

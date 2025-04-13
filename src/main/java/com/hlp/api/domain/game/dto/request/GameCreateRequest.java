@@ -5,6 +5,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.hlp.api.domain.game.model.Game;
+import com.hlp.api.domain.game.model.Result;
 import com.hlp.api.domain.user.model.User;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,8 +13,20 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonNaming(value = SnakeCaseStrategy.class)
 public record GameCreateRequest(
+    @Schema(name = "결과", example = "SUCCESS", requiredMode = REQUIRED)
+    @NotNull(message = "결과를 입력해주세요.")
+    Result result,
+
+    @Schema(name = "점수", example = "1234", requiredMode = REQUIRED)
+    @NotNull(message = "점수를 입력해주세요.")
+    Integer score,
+
+    @Schema(name = "체력", example = "55", requiredMode = REQUIRED)
+    @NotNull(message = "체력을 입력해주세요.")
+    Integer hp,
+
     @Schema(name = "운석 파괴 수", example = "54", requiredMode = REQUIRED)
-        @NotNull(message = "운석 파괴 수를 입력해주세요.")
+    @NotNull(message = "운석 파괴 수를 입력해주세요.")
     Integer meteoriteBrokenCount,
 
     @Schema(name = "눈 깜빡임 횟수", example = "12", requiredMode = REQUIRED)
@@ -31,6 +44,9 @@ public record GameCreateRequest(
 ) {
     public Game toEntity(User user) {
         return Game.builder()
+            .result(result)
+            .score(score)
+            .hp(hp)
             .meteoriteBrokenCount(meteoriteBrokenCount)
             .blinkEyeCount(blinkEyeCount)
             .avgLeftEyePupilSize(avgLeftEyePupilSize)
