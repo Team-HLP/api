@@ -35,7 +35,7 @@ public class GameController implements GameApi{
     public ResponseEntity<List<GameResponse>> getGames(
         @UserAuth Integer userId
     ) {
-        List<GameResponse> responses = gameService.getGames(userId);
-        return ResponseEntity.ok(responses);
+        List<GameResponse> response = gameService.getGames(userId);
+        return ResponseEntity.ok(response);
     }
 }
