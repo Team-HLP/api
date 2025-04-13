@@ -1,4 +1,4 @@
-package com.hlp.api.common.auth;
+package com.hlp.api.common.auth.admin;
 
 import static java.util.Objects.requireNonNull;
 

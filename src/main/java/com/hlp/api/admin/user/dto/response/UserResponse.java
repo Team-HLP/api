@@ -22,7 +22,7 @@ public record UserResponse(
     @Schema(description = "성별", example = "남자", requiredMode = REQUIRED)
     String sex,
 
-    @Schema(description = "배너 생성일", example = "2025.03.23")
+    @Schema(description = "유저 생성일", example = "2025.03.23", requiredMode = REQUIRED)
     @JsonFormat(pattern = "yyyy.MM.dd")
     LocalDate createdAt
 ) {
