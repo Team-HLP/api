@@ -24,7 +24,13 @@ public class AdminGameService {
 
     public List<AdminGameResponse> getGames(Integer userId) {
         User user = userRepository.getById(userId);
-        List<Game> games = adminGameRepository.getByUserId(userId);
+        List<Game> games = adminGameRepository.findAllByUserId(user.getId());
         return games.stream().map(AdminGameResponse::of).collect(Collectors.toList());
+    }
+
+    public AdminGameResponse getGame(Integer userId, Integer gameId) {
+        User user = userRepository.getById(userId);
+        Game game = adminGameRepository.getByIdAndUserId(gameId, user.getId());
+        return AdminGameResponse.of(game);
     }
 }
