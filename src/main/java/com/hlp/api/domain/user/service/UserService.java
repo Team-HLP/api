@@ -1,6 +1,6 @@
 package com.hlp.api.domain.user.service;
 
-import static com.hlp.api.domain.user.validation.PasswordValidator.checkPasswordMatches;
+import static com.hlp.api.common.auth.validation.PasswordValidator.checkPasswordMatches;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
