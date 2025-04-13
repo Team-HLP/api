@@ -16,5 +16,12 @@ public interface AdminUserRepository extends Repository<Admin, Integer> {
             .orElseThrow(() -> new UserNotFoundException("등록되지 않은 아이디입니다."));
     }
 
+    Optional<Admin> findById(Integer id);
+
+    default Admin getById(Integer id) {
+        return findById(id)
+            .orElseThrow(() -> new UserNotFoundException("admin id : " + id));
+    }
+
     void save(Admin admin);
 }
