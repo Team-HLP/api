@@ -1,4 +1,4 @@
-package com.hlp.api.domain.user.validation;
+package com.hlp.api.common.auth.validation;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 

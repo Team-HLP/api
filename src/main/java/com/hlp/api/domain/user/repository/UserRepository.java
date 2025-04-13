@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.repository.Repository;
 
-import com.hlp.api.domain.user.exception.UserNotFoundException;
+import com.hlp.api.common.auth.exception.UserNotFoundException;
 import com.hlp.api.domain.user.model.User;
 
 public interface UserRepository extends Repository<User, Long> {

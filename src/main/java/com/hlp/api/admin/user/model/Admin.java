@@ -1,4 +1,4 @@
-package com.hlp.api.admin.model;
+package com.hlp.api.admin.user.model;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
