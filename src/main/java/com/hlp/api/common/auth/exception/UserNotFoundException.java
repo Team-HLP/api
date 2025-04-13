@@ -1,8 +1,8 @@
-package com.hlp.api.domain.user.exception;
+package com.hlp.api.common.auth.exception;
 
-import com.hlp.api.common.exception.custom.HlpException;
+import com.hlp.api.common.exception.custom.DataNotFoundException;
 
-public class UserNotFoundException extends HlpException {
+public class UserNotFoundException extends DataNotFoundException {
     public UserNotFoundException(String detail) {
         super(detail);
     }
