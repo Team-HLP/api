@@ -51,7 +51,7 @@ public class AdminUserService {
 
     @Transactional
     public UserProvideResponse provide(UserProvideRequest request) {
-        String password = passwordEncoder.encode(request.phoneNumber());
+        String password = passwordEncoder.encode(request.phoneNumber().substring(request.phoneNumber().length() - 8));
         Integer count = userRepository.count();
         String loginId = String.format("user%05d", count + 1);
         userRepository.save(request.toEntity(loginId, password));
