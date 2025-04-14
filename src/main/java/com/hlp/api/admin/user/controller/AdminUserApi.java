@@ -66,7 +66,7 @@ public interface AdminUserApi {
     )
     @Operation(summary = "유저 아이디 발급", description = """
         sex는 MAN, WOMAN 중 하나의 값으로 보내주세요.
-        전화번호는 하이픈 없는 전화번호를 SHA 256으로 암호화해서 보내주세요.
+        전화번호는 하이픈 없는 전화번호를 보내주세요.
     """)
     @PostMapping("/admin/user/register")
     ResponseEntity<UserProvideResponse> provide(
