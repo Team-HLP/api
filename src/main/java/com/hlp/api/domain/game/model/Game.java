@@ -62,7 +62,7 @@ public class Game extends BaseEntity {
     private Float avgRightEyePupilSize;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Builder

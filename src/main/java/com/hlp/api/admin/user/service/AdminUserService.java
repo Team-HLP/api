@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hlp.api.admin.game.repository.AdminGameRepository;
 import com.hlp.api.admin.user.dto.request.AdminLoginRequest;
 import com.hlp.api.admin.user.dto.request.AdminRegisterRequest;
 import com.hlp.api.admin.user.dto.request.UserProvideRequest;
@@ -18,6 +19,7 @@ import com.hlp.api.admin.user.dto.response.UserResponse;
 import com.hlp.api.admin.user.model.Admin;
 import com.hlp.api.admin.user.repository.AdminUserRepository;
 import com.hlp.api.common.auth.JwtProvider;
+import com.hlp.api.domain.user.model.User;
 import com.hlp.api.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AdminUserService {
 
+    private final AdminGameRepository adminGameRepository;
     private final AdminUserRepository adminUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
@@ -60,5 +63,12 @@ public class AdminUserService {
         return userRepository.findAll().stream()
             .map(UserResponse::of)
             .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void userWithdraw(Integer userId) {
+        User user = userRepository.getById(userId);
+        adminGameRepository.findAllByUserId(userId).forEach(adminGameRepository::delete);
+        userRepository.delete(user);
     }
 }
