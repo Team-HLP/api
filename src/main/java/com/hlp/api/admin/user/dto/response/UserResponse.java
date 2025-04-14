@@ -10,6 +10,9 @@ import com.hlp.api.domain.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record UserResponse(
+    @Schema(description = "고유 id", example = "1", requiredMode = REQUIRED)
+    Integer id,
+
     @Schema(description = "로그인 아이디", example = "user00001", requiredMode = REQUIRED)
     String loginId,
 
@@ -28,6 +31,7 @@ public record UserResponse(
 ) {
     public static UserResponse of(User user) {
         return new UserResponse(
+            user.getId(),
             user.getLoginId(),
             user.getName(),
             user.getAge(),
