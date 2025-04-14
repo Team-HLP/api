@@ -3,9 +3,11 @@ package com.hlp.api.admin.user.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hlp.api.admin.user.dto.request.AdminLoginRequest;
 import com.hlp.api.admin.user.dto.request.AdminRegisterRequest;
@@ -64,7 +66,7 @@ public interface AdminUserApi {
     )
     @Operation(summary = "유저 아이디 발급", description = """
         sex는 MAN, WOMAN 중 하나의 값으로 보내주세요.
-        전화번호는 하이픈 없는 전화번호를 SHA 256으로 암호화해서 보내주세요.
+        전화번호는 하이픈 없는 전화번호를 보내주세요.
     """)
     @PostMapping("/admin/user/register")
     ResponseEntity<UserProvideResponse> provide(
@@ -84,6 +86,21 @@ public interface AdminUserApi {
     @Operation(summary = "유저 리스트 조회")
     @GetMapping("/admin/users")
     ResponseEntity<List<UserResponse>> getUsers(
+        @AdminAuth Integer adminId
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "204"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "유저 삭제")
+    @DeleteMapping("/admin/user/withdraw")
+    ResponseEntity<Void> userWithdraw(
+        @RequestParam(value = "userId") Integer userId,
         @AdminAuth Integer adminId
     );
 }

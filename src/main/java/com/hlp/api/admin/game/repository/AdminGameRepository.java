@@ -17,4 +17,6 @@ public interface AdminGameRepository extends Repository<Game, Integer> {
         return findByIdAndUserId(gameId, userId)
             .orElseThrow(() -> new GameNotFoundException("game id " + gameId + " user id" + userId));
     }
+
+    void delete(Game game);
 }
