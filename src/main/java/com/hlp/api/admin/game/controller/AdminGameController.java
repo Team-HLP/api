@@ -35,7 +35,7 @@ public class AdminGameController implements AdminGameApi {
         @RequestParam(name = "user_id") Integer userId,
         @AdminAuth Integer adminId
     ) {
-        AdminGameResponse response = adminGameService.getGame(adminId, gameId);
+        AdminGameResponse response = adminGameService.getGame(userId, gameId);
         return ResponseEntity.ok(response);
     }
 }
