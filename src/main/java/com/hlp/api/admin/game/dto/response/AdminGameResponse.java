@@ -13,16 +13,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonNaming(value = SnakeCaseStrategy.class)
 public record AdminGameResponse(
-    @Schema(name = "게임 번호", example = "1", requiredMode = REQUIRED)
+    @Schema(description = "게임 번호", example = "1", requiredMode = REQUIRED)
     Integer id,
 
-    @Schema(name = "평균 왼쪽 동공 크기", example = "3.57", requiredMode = REQUIRED)
+    @Schema(description = "평균 왼쪽 동공 크기", example = "3.57", requiredMode = REQUIRED)
     Float avgLeftEyePupilSize,
 
-    @Schema(name = "평균 오른쪽 동공 크기", example = "3.57", requiredMode = REQUIRED)
+    @Schema(description = "평균 오른쪽 동공 크기", example = "3.57", requiredMode = REQUIRED)
     Float avgRightEyePupilSize,
 
-    @Schema(name = "총 눈 깜빡임 횟수", example = "123", requiredMode = REQUIRED)
+    @Schema(description = "총 눈 깜빡임 횟수", example = "123", requiredMode = REQUIRED)
     Integer blinkEyeCount,
 
     @Schema(description = "게임 생성일", example = "2025.04.12 14:12")
