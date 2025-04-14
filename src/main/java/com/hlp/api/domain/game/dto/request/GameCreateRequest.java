@@ -13,31 +13,31 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonNaming(value = SnakeCaseStrategy.class)
 public record GameCreateRequest(
-    @Schema(name = "결과", example = "SUCCESS", requiredMode = REQUIRED)
+    @Schema(description = "결과", example = "SUCCESS", requiredMode = REQUIRED)
     @NotNull(message = "결과를 입력해주세요.")
     Result result,
 
-    @Schema(name = "점수", example = "1234", requiredMode = REQUIRED)
+    @Schema(description = "점수", example = "1234", requiredMode = REQUIRED)
     @NotNull(message = "점수를 입력해주세요.")
     Integer score,
 
-    @Schema(name = "체력", example = "55", requiredMode = REQUIRED)
+    @Schema(description = "체력", example = "55", requiredMode = REQUIRED)
     @NotNull(message = "체력을 입력해주세요.")
     Integer hp,
 
-    @Schema(name = "운석 파괴 수", example = "54", requiredMode = REQUIRED)
+    @Schema(description = "운석 파괴 수", example = "54", requiredMode = REQUIRED)
     @NotNull(message = "운석 파괴 수를 입력해주세요.")
     Integer meteoriteBrokenCount,
 
-    @Schema(name = "눈 깜빡임 횟수", example = "12", requiredMode = REQUIRED)
+    @Schema(description = "눈 깜빡임 횟수", example = "12", requiredMode = REQUIRED)
     @NotNull(message = "눈 깜빡임 횟수를 입력해주세요.")
     Integer blinkEyeCount,
 
-    @Schema(name = "왼쪽 눈 동공 평균 크기", example = "3.15", requiredMode = REQUIRED)
+    @Schema(description = "왼쪽 눈 동공 평균 크기", example = "3.15", requiredMode = REQUIRED)
     @NotNull(message = "왼쪽 눈 동공 평균 크기를 입력해주세요.")
     Float avgLeftEyePupilSize,
 
-    @Schema(name = "오른쪽 눈 동공 평균 크기", example = "3.15", requiredMode = REQUIRED)
+    @Schema(description = "오른쪽 눈 동공 평균 크기", example = "3.15", requiredMode = REQUIRED)
     @NotNull(message = "오른쪽 눈 동공 평균 크기를 입력해주세요.")
     Float avgRightEyePupilSize
 
