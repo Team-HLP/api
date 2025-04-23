@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hlp.api.admin.game.repository.AdminGameRepository;
 import com.hlp.api.admin.user.dto.request.AdminLoginRequest;
+import com.hlp.api.admin.user.dto.request.AdminPasswordChangeRequest;
 import com.hlp.api.admin.user.dto.request.AdminRegisterRequest;
 import com.hlp.api.admin.user.dto.request.UserProvideRequest;
 import com.hlp.api.admin.user.dto.response.AdminLoginResponse;
@@ -19,6 +20,7 @@ import com.hlp.api.admin.user.dto.response.UserResponse;
 import com.hlp.api.admin.user.model.Admin;
 import com.hlp.api.admin.user.repository.AdminUserRepository;
 import com.hlp.api.common.auth.JwtProvider;
+import com.hlp.api.common.auth.validation.PasswordValidator;
 import com.hlp.api.domain.user.model.User;
 import com.hlp.api.domain.user.repository.UserRepository;
 
@@ -70,5 +72,12 @@ public class AdminUserService {
         User user = userRepository.getById(userId);
         adminGameRepository.findAllByUserId(userId).forEach(adminGameRepository::delete);
         userRepository.delete(user);
+    }
+
+    @Transactional
+    public void changePassword(AdminPasswordChangeRequest request, Integer adminId) {
+        Admin admin = adminUserRepository.getById(adminId);
+        PasswordValidator.checkPasswordMatches(passwordEncoder, request.curPassword(), admin.getPassword());
+        admin.changePassword(passwordEncoder, request.newPassword());
     }
 }

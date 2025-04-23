@@ -5,12 +5,14 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hlp.api.admin.user.dto.request.AdminLoginRequest;
+import com.hlp.api.admin.user.dto.request.AdminPasswordChangeRequest;
 import com.hlp.api.admin.user.dto.request.AdminRegisterRequest;
 import com.hlp.api.admin.user.dto.request.UserProvideRequest;
 import com.hlp.api.admin.user.dto.response.AdminLoginResponse;
@@ -67,6 +69,15 @@ public class AdminUserController implements AdminUserApi {
         @AdminAuth Integer adminId
     ) {
         adminUserService.userWithdraw(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/admin/password")
+    public ResponseEntity<Void> changePassword(
+        @RequestBody @Valid AdminPasswordChangeRequest request,
+        @AdminAuth Integer adminId
+    ) {
+        adminUserService.changePassword(request, adminId);
         return ResponseEntity.noContent().build();
     }
 }
