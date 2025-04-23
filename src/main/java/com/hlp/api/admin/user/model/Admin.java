@@ -3,6 +3,8 @@ package com.hlp.api.admin.user.model;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.hlp.api.common.model.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -64,5 +66,9 @@ public class Admin extends BaseEntity {
         this.isAuth = isAuth;
         this.name = name;
         this.phoneNumber = phoneNumber;
+    }
+
+    public void changePassword(PasswordEncoder passwordEncoder, String newPassword) {
+        this.password = passwordEncoder.encode(newPassword);
     }
 }

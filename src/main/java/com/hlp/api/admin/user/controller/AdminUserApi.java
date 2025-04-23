@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hlp.api.admin.user.dto.request.AdminLoginRequest;
+import com.hlp.api.admin.user.dto.request.AdminPasswordChangeRequest;
 import com.hlp.api.admin.user.dto.request.AdminRegisterRequest;
 import com.hlp.api.admin.user.dto.request.UserProvideRequest;
 import com.hlp.api.admin.user.dto.response.AdminLoginResponse;
@@ -101,6 +103,21 @@ public interface AdminUserApi {
     @DeleteMapping("/admin/user/withdraw")
     ResponseEntity<Void> userWithdraw(
         @RequestParam(value = "userId") Integer userId,
+        @AdminAuth Integer adminId
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "204"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "어드민 비밀번호 변경")
+    @PatchMapping("/admin/password")
+    ResponseEntity<Void> changePassword(
+        @RequestBody @Valid AdminPasswordChangeRequest request,
         @AdminAuth Integer adminId
     );
 }
