@@ -56,6 +56,10 @@ public class User extends BaseEntity {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
+    @NotNull
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted;
+
     @Builder
     private User(
         Integer id,
@@ -64,7 +68,8 @@ public class User extends BaseEntity {
         String name,
         Integer age,
         Sex sex,
-        String phoneNumber
+        String phoneNumber,
+        Boolean isDeleted
     ) {
         this.id = id;
         this.loginId = loginId;
@@ -73,5 +78,6 @@ public class User extends BaseEntity {
         this.age = age;
         this.sex = sex;
         this.phoneNumber = phoneNumber;
+        this.isDeleted = isDeleted;
     }
 }

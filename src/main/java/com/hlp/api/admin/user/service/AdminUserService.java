@@ -62,7 +62,7 @@ public class AdminUserService {
     }
 
     public List<UserResponse> getUsers() {
-        return userRepository.findAll().stream()
+        return userRepository.findAllByIsDeletedFalse().stream()
             .map(UserResponse::of)
             .collect(Collectors.toList());
     }
