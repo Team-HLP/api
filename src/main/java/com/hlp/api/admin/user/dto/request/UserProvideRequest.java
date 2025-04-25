@@ -39,6 +39,7 @@ public record UserProvideRequest(
             .name(name)
             .age(age)
             .sex(sex)
+            .isDeleted(false)
             .build();
     }
 }

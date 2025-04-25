@@ -21,7 +21,7 @@ public interface UserRepository extends Repository<User, Long> {
 
     Integer count();
 
-    List<User> findAll();
+    List<User> findAllByIsDeletedFalse();
 
     Optional<User> findById(Integer id);
 
