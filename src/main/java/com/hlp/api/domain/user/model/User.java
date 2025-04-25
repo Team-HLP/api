@@ -80,4 +80,8 @@ public class User extends BaseEntity {
         this.phoneNumber = phoneNumber;
         this.isDeleted = isDeleted;
     }
+
+    public void withdraw() {
+        this.isDeleted = true;
+    }
 }

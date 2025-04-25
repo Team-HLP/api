@@ -21,6 +21,7 @@ import com.hlp.api.admin.user.model.Admin;
 import com.hlp.api.admin.user.repository.AdminUserRepository;
 import com.hlp.api.common.auth.JwtProvider;
 import com.hlp.api.common.auth.validation.PasswordValidator;
+import com.hlp.api.domain.game.model.Game;
 import com.hlp.api.domain.user.model.User;
 import com.hlp.api.domain.user.repository.UserRepository;
 
@@ -70,8 +71,8 @@ public class AdminUserService {
     @Transactional
     public void userWithdraw(Integer userId) {
         User user = userRepository.getById(userId);
-        adminGameRepository.findAllByUserId(userId).forEach(adminGameRepository::delete);
-        userRepository.delete(user);
+        adminGameRepository.findAllByUserId(userId).forEach(Game::delete);
+        user.withdraw();
     }
 
     @Transactional

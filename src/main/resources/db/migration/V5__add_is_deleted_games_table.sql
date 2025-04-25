@@ -1,0 +1,2 @@
+ALTER TABLE `games`
+    ADD COLUMN `is_deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '삭제 여부';
