@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
+import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,5 +33,19 @@ public interface GuardianApi {
     @PostMapping("/login")
     ResponseEntity<GuardianLoginResponse> login(
         @RequestBody @Valid GuardianLoginRequest request
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "인증번호 발송")
+    @PostMapping("/verification")
+    ResponseEntity<Void> verification(
+        @RequestBody @Valid GuardianVerificationRequest request
     );
 }
