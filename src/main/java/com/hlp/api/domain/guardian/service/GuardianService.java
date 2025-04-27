@@ -14,6 +14,7 @@ import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
+import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
 import com.hlp.api.domain.guardian.model.Guardian;
 import com.hlp.api.domain.guardian.model.GuardianCertificationCode;
 import com.hlp.api.domain.guardian.repository.GuardianCertificationCodeRepository;
@@ -69,5 +70,10 @@ public class GuardianService {
 
         Guardian guardian = request.toEntity(passwordEncoder.encode(request.password()));
         guardianRepository.save(guardian);
+    }
+
+    public GuardianResponse getGuardian(Integer guardianId) {
+        Guardian guardian = guardianRepository.getById(guardianId);
+        return GuardianResponse.of(guardian);
     }
 }

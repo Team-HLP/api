@@ -6,10 +6,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hlp.api.common.auth.guardian.GuardianAuth;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
+import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
 import com.hlp.api.domain.guardian.service.GuardianService;
 
 import jakarta.validation.Valid;
@@ -44,5 +46,13 @@ public class GuardianController implements GuardianApi {
     ) {
         guardianService.register(request);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/me")
+    public ResponseEntity<GuardianResponse> getGuardian(
+        @GuardianAuth Integer guardianId
+    ) {
+        GuardianResponse response = guardianService.getGuardian(guardianId);
+        return ResponseEntity.ok(response);
     }
 }

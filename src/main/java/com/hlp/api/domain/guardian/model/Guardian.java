@@ -3,6 +3,8 @@ package com.hlp.api.domain.guardian.model;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.hlp.api.common.model.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "guardians")
 @NoArgsConstructor(access = PROTECTED)
-public class Guardian {
+public class Guardian extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)

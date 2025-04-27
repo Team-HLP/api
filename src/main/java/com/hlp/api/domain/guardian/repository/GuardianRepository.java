@@ -25,4 +25,11 @@ public interface GuardianRepository extends Repository<Guardian, Integer> {
     }
 
     void save(Guardian guardian);
+
+    Optional<Guardian> findById(Integer id);
+
+    default Guardian getById(Integer id) {
+        return findById(id)
+            .orElseThrow(() -> new UserNotFoundException("등록되지 않은 유저입니다."));
+    }
 }

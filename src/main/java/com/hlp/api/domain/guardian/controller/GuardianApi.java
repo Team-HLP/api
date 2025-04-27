@@ -5,10 +5,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.hlp.api.common.auth.guardian.GuardianAuth;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
+import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -62,5 +64,19 @@ public interface GuardianApi {
     @PostMapping("/register")
     ResponseEntity<Void> register(
         @RequestBody @Valid GuardianRegisterRequest request
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "보호자 정보 조회")
+    @PostMapping("/me")
+    ResponseEntity<GuardianResponse> getGuardian(
+        @GuardianAuth Integer guardianId
     );
 }
