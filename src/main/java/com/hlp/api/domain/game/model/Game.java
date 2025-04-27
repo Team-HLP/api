@@ -38,6 +38,19 @@ public class Game extends BaseEntity {
     private Result result;
 
     @NotNull
+    @Enumerated(STRING)
+    @Column(name = "game_category", nullable = false)
+    private GameCategory gameCategory;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @NotNull
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted;
+
+    @NotNull
     @Column(name = "score", nullable = false)
     private Integer score;
 
@@ -61,37 +74,31 @@ public class Game extends BaseEntity {
     @Column(name = "avg_right_eye_pupil_size", nullable = false)
     private Float avgRightEyePupilSize;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @NotNull
-    @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
-
     @Builder
     private Game(
         Integer id,
         Result result,
+        GameCategory gameCategory,
+        User user,
+        Boolean isDeleted,
         Integer score,
         Integer hp,
         Integer meteoriteBrokenCount,
         Integer blinkEyeCount,
         Float avgLeftEyePupilSize,
-        Float avgRightEyePupilSize,
-        User user,
-        Boolean isDeleted
+        Float avgRightEyePupilSize
     ) {
         this.id = id;
         this.result = result;
+        this.gameCategory = gameCategory;
+        this.user = user;
+        this.isDeleted = isDeleted;
         this.score = score;
         this.hp = hp;
         this.meteoriteBrokenCount = meteoriteBrokenCount;
         this.blinkEyeCount = blinkEyeCount;
         this.avgLeftEyePupilSize = avgLeftEyePupilSize;
         this.avgRightEyePupilSize = avgRightEyePupilSize;
-        this.user = user;
-        this.isDeleted = isDeleted;
     }
 
     public void delete() {

@@ -44,6 +44,7 @@ public class GuardianService {
         return GuardianLoginResponse.of(accessToken);
     }
 
+    @Transactional
     public void sendCertificationCode(GuardianVerificationRequest request) {
         Random random = new Random();
 
@@ -53,7 +54,7 @@ public class GuardianService {
         }
 
         String certificationCode = String.valueOf(random.nextInt(900000) + 100000);
-        smsUtil.sendOne(phoneNum, certificationCode);
+        // smsUtil.sendOne(phoneNum, certificationCode);
 
         guardianCertificationCodeRepository.save(GuardianCertificationCode.of(phoneNum, certificationCode));
     }
