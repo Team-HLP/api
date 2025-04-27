@@ -12,6 +12,3 @@ ALTER TABLE games
 
 ALTER TABLE games
     DROP COLUMN `avg_right_eye_pupil_size`;
-
-ALTER TABLE games
-    DROP COLUMN `blink_eye_count`;

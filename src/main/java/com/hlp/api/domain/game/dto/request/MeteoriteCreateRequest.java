@@ -5,7 +5,9 @@ import static com.hlp.api.domain.game.model.GameCategory.METEORITE_DESTRUCTION;
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.hlp.api.admin.game.model.EyeData;
 import com.hlp.api.domain.game.model.Game;
+import com.hlp.api.domain.game.model.MeteoriteDestruction;
 import com.hlp.api.domain.game.model.Result;
 import com.hlp.api.domain.user.model.User;
 
@@ -30,11 +32,26 @@ public record MeteoriteCreateRequest(
     @NotNull(message = "운석 파괴 수를 입력해주세요.")
     Integer meteoriteBrokenCount
 ) {
-    public Game toEntity(User user) {
+    public Game toGame(User user, EyeData eyeData) {
         return Game.builder()
             .user(user)
             .result(result)
+            .blinkEyeCount(eyeData.totalBlinkEyeCount())
+            .baseLeftPupilSize(eyeData.basePupilSize().left())
+            .baseRightPupilSize(eyeData.basePupilSize().right())
+            .belowBaseLeftPupilCount(eyeData.belowBaseLeftPupilCount())
+            .belowBaseRightPupilCount(eyeData.belowBaseRightPupilCount())
             .gameCategory(METEORITE_DESTRUCTION)
+            .isDeleted(false)
+            .build();
+    }
+
+    public MeteoriteDestruction toMeteoriteDestruction(Game game) {
+        return MeteoriteDestruction.builder()
+            .hp(hp)
+            .score(score)
+            .meteoriteBrokenCount(meteoriteBrokenCount)
+            .game(game)
             .build();
     }
 }

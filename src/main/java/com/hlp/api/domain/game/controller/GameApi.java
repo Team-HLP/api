@@ -36,7 +36,7 @@ public interface GameApi {
     @PostMapping("/game/meteorite")
     ResponseEntity<Void> crateMeteorite(
         @RequestPart("request") @Valid MeteoriteCreateRequest request,
-        @RequestPart("eeg_data_file") MultipartFile eegDataFile,
+        // @RequestPart("eeg_data_file") MultipartFile eegDataFile,
         @RequestPart("eye_data_file") MultipartFile eyeDataFile,
         @UserAuth Integer userId
     );

@@ -7,6 +7,8 @@ public record EyeData(
     List<PupilRecord> pupilRecords,
     Integer totalBlinkEyeCount
 ) {
+    private static final Double TOLERANCE = 0.5;
+
     public record BasePupilSize(
         Double left,
         Double right
@@ -26,5 +28,29 @@ public record EyeData(
         Double right
     ) {
 
+    }
+
+    public Integer belowBaseLeftPupilCount() {
+        int count = 0;
+        for (PupilRecord record : pupilRecords) {
+            if (record.pupilSize.left != null && basePupilSize.left != null) {
+                if (record.pupilSize.left < basePupilSize.left - TOLERANCE) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public Integer belowBaseRightPupilCount() {
+        int count = 0;
+        for (PupilRecord record : pupilRecords) {
+            if (record.pupilSize.right != null && basePupilSize.right != null) {
+                if (record.pupilSize.right < basePupilSize.right - TOLERANCE) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 }
