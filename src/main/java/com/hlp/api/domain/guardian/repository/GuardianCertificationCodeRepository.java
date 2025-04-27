@@ -17,4 +17,6 @@ public interface GuardianCertificationCodeRepository extends Repository<Guardian
         return findByPhoneNumber(phoneNumber)
             .orElseThrow(() -> new VerifyNotFoundException("인증번호가 존재하지 않습니다."));
     }
+
+    void remove(GuardianCertificationCode guardianCertificationCode);
 }

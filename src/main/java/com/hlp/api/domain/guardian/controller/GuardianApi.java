@@ -9,6 +9,7 @@ import com.hlp.api.common.auth.guardian.GuardianAuth;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
+import com.hlp.api.domain.guardian.dto.request.GuardianVerifySmsVerificationRequest;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
 
@@ -47,9 +48,23 @@ public interface GuardianApi {
         }
     )
     @Operation(summary = "인증번호 발송")
-    @PostMapping("/verification")
-    ResponseEntity<Void> verification(
+    @PostMapping("/sms/send")
+    ResponseEntity<Void> sendSmsVerificationCode(
         @RequestBody @Valid GuardianVerificationRequest request
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "인증번호 인증")
+    @PostMapping("/sms/verify")
+    ResponseEntity<Void> verifySmsVerificationCode(
+        @RequestBody @Valid GuardianVerifySmsVerificationRequest request
     );
 
     @ApiResponses(

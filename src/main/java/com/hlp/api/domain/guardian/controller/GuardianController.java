@@ -10,6 +10,7 @@ import com.hlp.api.common.auth.guardian.GuardianAuth;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
+import com.hlp.api.domain.guardian.dto.request.GuardianVerifySmsVerificationRequest;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
 import com.hlp.api.domain.guardian.service.GuardianService;
@@ -32,11 +33,19 @@ public class GuardianController implements GuardianApi {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/verification")
-    public ResponseEntity<Void> verification(
+    @PostMapping("/sms/send")
+    public ResponseEntity<Void> sendSmsVerificationCode(
         @RequestBody @Valid GuardianVerificationRequest request
     ) {
         guardianService.sendCertificationCode(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/sms/verify")
+    public ResponseEntity<Void> verifySmsVerificationCode(
+        @RequestBody @Valid GuardianVerifySmsVerificationRequest request
+    ) {
+        guardianService.verifySmsVerificationCode(request);
         return ResponseEntity.ok().build();
     }
 
