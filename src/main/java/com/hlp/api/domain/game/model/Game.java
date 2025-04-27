@@ -51,18 +51,6 @@ public class Game extends BaseEntity {
     private Boolean isDeleted;
 
     @NotNull
-    @Column(name = "score", nullable = false)
-    private Integer score;
-
-    @NotNull
-    @Column(name = "hp", nullable = false)
-    private Integer hp;
-
-    @NotNull
-    @Column(name = "meteorite_broken_count", nullable = false)
-    private Integer meteoriteBrokenCount;
-
-    @NotNull
     @Column(name = "blink_eye_count", nullable = false)
     private Integer blinkEyeCount;
 
@@ -81,9 +69,6 @@ public class Game extends BaseEntity {
         GameCategory gameCategory,
         User user,
         Boolean isDeleted,
-        Integer score,
-        Integer hp,
-        Integer meteoriteBrokenCount,
         Integer blinkEyeCount,
         Float avgLeftEyePupilSize,
         Float avgRightEyePupilSize
@@ -93,9 +78,6 @@ public class Game extends BaseEntity {
         this.gameCategory = gameCategory;
         this.user = user;
         this.isDeleted = isDeleted;
-        this.score = score;
-        this.hp = hp;
-        this.meteoriteBrokenCount = meteoriteBrokenCount;
         this.blinkEyeCount = blinkEyeCount;
         this.avgLeftEyePupilSize = avgLeftEyePupilSize;
         this.avgRightEyePupilSize = avgRightEyePupilSize;

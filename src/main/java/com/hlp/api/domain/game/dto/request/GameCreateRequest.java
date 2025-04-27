@@ -45,9 +45,6 @@ public record GameCreateRequest(
     public Game toEntity(User user) {
         return Game.builder()
             .result(result)
-            .score(score)
-            .hp(hp)
-            .meteoriteBrokenCount(meteoriteBrokenCount)
             .blinkEyeCount(blinkEyeCount)
             .avgLeftEyePupilSize(avgLeftEyePupilSize)
             .avgRightEyePupilSize(avgRightEyePupilSize)

@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.hlp.api.common.config.FileStorageProperties;
 import com.hlp.api.domain.game.dto.request.GameCreateRequest;
-import com.hlp.api.domain.game.dto.response.GameResponse;
 import com.hlp.api.domain.game.dto.response.MeteoriteDestructionResponse;
 import com.hlp.api.domain.game.exception.DataFileSaveException;
 import com.hlp.api.domain.game.model.Game;
@@ -39,7 +38,7 @@ public class GameService {
     private final MeteoriteDestructionRepository meteoriteDestructionRepository;
 
     @Transactional
-    public GameResponse createGame(
+    public void createGame(
         GameCreateRequest request, MultipartFile eegDatafile, MultipartFile eyeDatafile, Integer userId
     ) {
         User user = userRepository.getById(userId);
@@ -62,8 +61,6 @@ public class GameService {
         } catch (IOException e) {
             throw new DataFileSaveException("생체 데이터 저장 과정에서 오류가 발생했습니다");
         }
-
-        return GameResponse.of(game);
     }
 
     public List<Object> getGames(Integer userId, GameCategory gameCategory) {
