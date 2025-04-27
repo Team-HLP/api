@@ -1,7 +1,10 @@
 package com.hlp.api.domain.game.service;
 
+import static com.hlp.api.domain.game.model.GameCategory.METEORITE_DESTRUCTION;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -13,9 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hlp.api.common.config.FileStorageProperties;
 import com.hlp.api.domain.game.dto.request.GameCreateRequest;
 import com.hlp.api.domain.game.dto.response.GameResponse;
+import com.hlp.api.domain.game.dto.response.MeteoriteDestructionResponse;
 import com.hlp.api.domain.game.exception.DataFileSaveException;
 import com.hlp.api.domain.game.model.Game;
+import com.hlp.api.domain.game.model.GameCategory;
+import com.hlp.api.domain.game.model.MeteoriteDestruction;
 import com.hlp.api.domain.game.repository.GameRepository;
+import com.hlp.api.domain.game.repository.MeteoriteDestructionRepository;
 import com.hlp.api.domain.user.model.User;
 import com.hlp.api.domain.user.repository.UserRepository;
 
@@ -29,6 +36,7 @@ public class GameService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final FileStorageProperties fileStorageProperties;
+    private final MeteoriteDestructionRepository meteoriteDestructionRepository;
 
     @Transactional
     public GameResponse createGame(
@@ -58,9 +66,20 @@ public class GameService {
         return GameResponse.of(game);
     }
 
-    public List<GameResponse> getGames(Integer userId) {
+    public List<Object> getGames(Integer userId, GameCategory gameCategory) {
         User user = userRepository.getById(userId);
-        List<Game> games = gameRepository.findAllByUserId(user.getId());
-        return games.stream().map(GameResponse::of).collect(Collectors.toList());
+
+        List<Game> games = gameRepository.findAllByUserIdAndGameCategory(user.getId(), gameCategory);
+
+        if (gameCategory == METEORITE_DESTRUCTION) {
+            return games.stream()
+                .map(game -> {
+                    MeteoriteDestruction meteoriteDestruction = meteoriteDestructionRepository.findByGameId(
+                        game.getId());
+                    return MeteoriteDestructionResponse.of(game, meteoriteDestruction);
+                })
+                .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

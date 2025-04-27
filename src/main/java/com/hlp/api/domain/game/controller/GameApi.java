@@ -1,13 +1,11 @@
 package com.hlp.api.domain.game.controller;
 
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
-
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hlp.api.common.auth.user.UserAuth;
 import com.hlp.api.domain.game.dto.request.GameCreateRequest;
 import com.hlp.api.domain.game.dto.response.GameResponse;
+import com.hlp.api.domain.game.model.GameCategory;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -54,7 +53,8 @@ public interface GameApi {
     )
     @Operation(summary = "게임 리스트 조회")
     @GetMapping("/games")
-    ResponseEntity<List<GameResponse>> getGames(
-        @UserAuth Integer userId
+    ResponseEntity<List<Object>> getGames(
+        @UserAuth Integer userId,
+        @RequestParam GameCategory gameCategory
     );
 }
