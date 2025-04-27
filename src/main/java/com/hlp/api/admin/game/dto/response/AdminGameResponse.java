@@ -16,15 +16,6 @@ public record AdminGameResponse(
     @Schema(description = "게임 번호", example = "1", requiredMode = REQUIRED)
     Integer id,
 
-    @Schema(description = "평균 왼쪽 동공 크기", example = "3.57", requiredMode = REQUIRED)
-    Float avgLeftEyePupilSize,
-
-    @Schema(description = "평균 오른쪽 동공 크기", example = "3.57", requiredMode = REQUIRED)
-    Float avgRightEyePupilSize,
-
-    @Schema(description = "총 눈 깜빡임 횟수", example = "123", requiredMode = REQUIRED)
-    Integer blinkEyeCount,
-
     @Schema(description = "게임 생성일", example = "2025.04.12 14:12")
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
     LocalDateTime createdAt
@@ -32,9 +23,6 @@ public record AdminGameResponse(
     public static AdminGameResponse of(Game game) {
         return new AdminGameResponse(
             game.getId(),
-            game.getAvgLeftEyePupilSize(),
-            game.getAvgRightEyePupilSize(),
-            game.getBlinkEyeCount(),
             game.getCreatedAt()
         );
     }

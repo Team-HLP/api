@@ -50,37 +50,19 @@ public class Game extends BaseEntity {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @NotNull
-    @Column(name = "blink_eye_count", nullable = false)
-    private Integer blinkEyeCount;
-
-    @NotNull
-    @Column(name = "avg_left_eye_pupil_size", nullable = false)
-    private Float avgLeftEyePupilSize;
-
-    @NotNull
-    @Column(name = "avg_right_eye_pupil_size", nullable = false)
-    private Float avgRightEyePupilSize;
-
     @Builder
     private Game(
         Integer id,
         Result result,
         GameCategory gameCategory,
         User user,
-        Boolean isDeleted,
-        Integer blinkEyeCount,
-        Float avgLeftEyePupilSize,
-        Float avgRightEyePupilSize
+        Boolean isDeleted
     ) {
         this.id = id;
         this.result = result;
         this.gameCategory = gameCategory;
         this.user = user;
         this.isDeleted = isDeleted;
-        this.blinkEyeCount = blinkEyeCount;
-        this.avgLeftEyePupilSize = avgLeftEyePupilSize;
-        this.avgRightEyePupilSize = avgRightEyePupilSize;
     }
 
     public void delete() {

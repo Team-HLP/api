@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hlp.api.common.config.FileStorageProperties;
-import com.hlp.api.domain.game.dto.request.GameCreateRequest;
+import com.hlp.api.domain.game.dto.request.MeteoriteCreateRequest;
 import com.hlp.api.domain.game.dto.response.MeteoriteDestructionResponse;
 import com.hlp.api.domain.game.exception.DataFileSaveException;
 import com.hlp.api.domain.game.model.Game;
@@ -38,14 +38,17 @@ public class GameService {
     private final MeteoriteDestructionRepository meteoriteDestructionRepository;
 
     @Transactional
-    public void createGame(
-        GameCreateRequest request, MultipartFile eegDatafile, MultipartFile eyeDatafile, Integer userId
+    public void crateMeteorite(
+        MeteoriteCreateRequest request, MultipartFile eegDatafile, MultipartFile eyeDatafile, Integer userId
     ) {
         User user = userRepository.getById(userId);
         Game game = gameRepository.save(request.toEntity(user));
 
         String path = String.format(fileStorageProperties.path(), System.getProperty("user.dir"), user.getId(), game.getId());
+        saveJsonFile(eegDatafile, eyeDatafile, path);
+    }
 
+    private static void saveJsonFile(MultipartFile eegDatafile, MultipartFile eyeDatafile, String path) {
         try {
             File directory = new File(path);
             if (!directory.exists()) {
