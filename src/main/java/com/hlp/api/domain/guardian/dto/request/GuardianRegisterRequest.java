@@ -32,6 +32,7 @@ public record GuardianRegisterRequest(
             .loginId(loginId)
             .password(password)
             .name(name)
+            .isDeleted(false)
             .phoneNumber(phoneNumber)
             .build();
     }

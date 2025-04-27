@@ -81,10 +81,10 @@ public class GuardianService {
 
     @Transactional
     public void verifySmsVerificationCode(GuardianVerifySmsVerificationRequest request) {
-        GuardianCertificationCode byVerify = guardianCertificationCodeRepository.getByVerify(request.phoneNumber());
+        GuardianCertificationCode byVerify = guardianCertificationCodeRepository.getByPhoneNumber(request.phoneNumber());
         if (!request.certificationCode().equals(byVerify.getCertificationCode())) {
             throw new CertificationCodeNotEqualException("인증번호가 일치하지 않습니다.");
         }
-        guardianCertificationCodeRepository.remove(byVerify);
+        guardianCertificationCodeRepository.delete(byVerify);
     }
 }

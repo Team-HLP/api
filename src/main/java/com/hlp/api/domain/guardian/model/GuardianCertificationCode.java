@@ -3,6 +3,7 @@ package com.hlp.api.domain.guardian.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
+import org.springframework.data.redis.core.index.Indexed;
 
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ public class GuardianCertificationCode {
     private static final long CACHE_EXPIRE_SECOND = 60 * 5L;
 
     @Id
+    @Indexed
     private String phoneNumber;
     private String certificationCode;
 
