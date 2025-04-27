@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.hlp.api.admin.game.dto.response.AdminGameDetailResponse;
 import com.hlp.api.admin.game.dto.response.AdminGameResponse;
 import com.hlp.api.common.auth.admin.AdminAuth;
 
@@ -45,7 +46,7 @@ public interface AdminGameApi {
     )
     @Operation(summary = "게임 단건 조회")
     @GetMapping("/admin/game/{gameId}")
-    ResponseEntity<AdminGameResponse> getGame(
+    ResponseEntity<AdminGameDetailResponse> getGame(
         @PathVariable(name = "gameId") Integer gameId,
         @RequestParam(name = "user_id") Integer userId,
         @AdminAuth Integer adminId

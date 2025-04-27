@@ -16,6 +16,9 @@ public record AdminGameResponse(
     @Schema(description = "게임 번호", example = "1", requiredMode = REQUIRED)
     Integer id,
 
+    @Schema(description = "게임 카테고리", example = "운석 부수기", requiredMode = REQUIRED)
+    String category,
+
     @Schema(description = "게임 생성일", example = "2025.04.12 14:12")
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
     LocalDateTime createdAt
@@ -23,6 +26,7 @@ public record AdminGameResponse(
     public static AdminGameResponse of(Game game) {
         return new AdminGameResponse(
             game.getId(),
+            game.getGameCategory().getDisplayName(),
             game.getCreatedAt()
         );
     }
