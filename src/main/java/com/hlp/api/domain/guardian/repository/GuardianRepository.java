@@ -23,4 +23,6 @@ public interface GuardianRepository extends Repository<Guardian, Integer> {
         return findByPhoneNumber(phoneNumber)
             .orElseThrow(() -> new UserPhoneNumberDuplicateException("등록된 전화번호입니다"));
     }
+
+    void save(Guardian guardian);
 }

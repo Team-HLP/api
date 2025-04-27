@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hlp.api.common.auth.JwtProvider;
 import com.hlp.api.common.util.SmsUtil;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
+import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
 import com.hlp.api.domain.guardian.model.Guardian;
@@ -57,5 +58,16 @@ public class GuardianService {
         // smsUtil.sendOne(phoneNum, certificationCode);
 
         guardianCertificationCodeRepository.save(GuardianCertificationCode.of(phoneNum, certificationCode));
+    }
+
+    @Transactional
+    public void register(GuardianRegisterRequest request) {
+        guardianRepository.findByPhoneNumber(request.phoneNumber())
+            .ifPresent(guardian -> {
+                throw new UserPhoneNumberDuplicateException("등록된 전화번호입니다");
+            });
+
+        Guardian guardian = request.toEntity(passwordEncoder.encode(request.password()));
+        guardianRepository.save(guardian);
     }
 }
