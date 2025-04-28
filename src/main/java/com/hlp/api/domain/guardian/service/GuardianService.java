@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hlp.api.common.auth.JwtProvider;
 import com.hlp.api.common.util.SmsUtil;
+import com.hlp.api.domain.guardian.dto.request.GuardianChildrenRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
@@ -24,11 +25,13 @@ import com.hlp.api.domain.guardian.model.Guardian;
 import com.hlp.api.domain.guardian.model.GuardianCertificationCode;
 import com.hlp.api.domain.guardian.model.GuardianChildrenMap;
 import com.hlp.api.domain.guardian.repository.GuardianCertificationCodeRepository;
-import com.hlp.api.domain.guardian.repository.GuardianChildrenRepository;
+import com.hlp.api.domain.guardian.repository.GuardianChildrenMapRepository;
 import com.hlp.api.domain.guardian.repository.GuardianRepository;
 import com.hlp.api.domain.user.exception.UserLoginIdDuplicateException;
 import com.hlp.api.domain.user.exception.UserPhoneNumberDuplicateException;
 import com.hlp.api.domain.user.exception.UserWithDrawException;
+import com.hlp.api.domain.user.model.User;
+import com.hlp.api.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,7 +41,8 @@ import lombok.RequiredArgsConstructor;
 public class GuardianService {
 
     private final GuardianCertificationCodeRepository guardianCertificationCodeRepository;
-    private final GuardianChildrenRepository guardianChildrenRepository;
+    private final GuardianChildrenMapRepository guardianChildrenMapRepository;
+    private final UserRepository childrenRepository;
     private final GuardianRepository guardianRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
@@ -108,10 +112,17 @@ public class GuardianService {
 
     public List<ChildrenResponse> getChildren(Integer guardianId) {
         Guardian guardian = guardianRepository.getById(guardianId);
-        List<GuardianChildrenMap> guardianChildrenMaps = guardianChildrenRepository.getByGuardianId(guardian.getId());
+        List<GuardianChildrenMap> guardianChildrenMaps = guardianChildrenMapRepository.getByGuardianId(guardian.getId());
 
         return guardianChildrenMaps.stream()
             .map(guardianChildrenMap -> ChildrenResponse.of(guardianChildrenMap.getChildren()))
             .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void registerChildren(Integer guardianId, GuardianChildrenRegisterRequest request) {
+        Guardian guardian = guardianRepository.getById(guardianId);
+        User children = childrenRepository.getById(request.childrenId());
+        guardianChildrenMapRepository.save(request.toEntity(children, guardian));
     }
 }

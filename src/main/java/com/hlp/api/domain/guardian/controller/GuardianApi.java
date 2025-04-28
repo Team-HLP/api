@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.hlp.api.common.auth.guardian.GuardianAuth;
+import com.hlp.api.domain.guardian.dto.request.GuardianChildrenRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
@@ -110,6 +111,21 @@ public interface GuardianApi {
     @Operation(summary = "자녀 목록 조회")
     @GetMapping("/children")
     ResponseEntity<List<ChildrenResponse>>getChildren(
+        @GuardianAuth Integer guardianId
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "자녀 등록")
+    @PostMapping("/children")
+    ResponseEntity<Void> registerChildren(
+        @RequestBody @Valid GuardianChildrenRegisterRequest request,
         @GuardianAuth Integer guardianId
     );
 }

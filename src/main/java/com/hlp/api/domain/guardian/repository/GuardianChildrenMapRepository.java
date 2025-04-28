@@ -6,7 +6,9 @@ import org.springframework.data.repository.Repository;
 
 import com.hlp.api.domain.guardian.model.GuardianChildrenMap;
 
-public interface GuardianChildrenRepository extends Repository<GuardianChildrenMap, Integer> {
+public interface GuardianChildrenMapRepository extends Repository<GuardianChildrenMap, Integer> {
 
     List<GuardianChildrenMap> getByGuardianId(Integer guardianId);
+
+    void save(GuardianChildrenMap guardianChildrenMap);
 }
