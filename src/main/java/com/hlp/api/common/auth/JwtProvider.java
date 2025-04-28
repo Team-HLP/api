@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.hlp.api.admin.user.model.Admin;
 import com.hlp.api.common.auth.exception.InvalidJwtException;
 import com.hlp.api.common.exception.custom.AuthenticationException;
+import com.hlp.api.domain.guardian.model.Guardian;
 import com.hlp.api.domain.user.model.User;
 
 import io.jsonwebtoken.JwtException;
@@ -73,6 +74,20 @@ public class JwtProvider {
             .add("alg", key.getAlgorithm())
             .and()
             .claim("id", admin.getId())
+            .expiration(Date.from(Instant.now().plusMillis(expirationTime)))
+            .compact();
+    }
+
+    // Guardian
+    public String createToken(@NotNull Guardian guardian) {
+        Key key = getSecretKey();
+        return Jwts.builder()
+            .signWith(key)
+            .header()
+            .add("typ", "JWT")
+            .add("alg", key.getAlgorithm())
+            .and()
+            .claim("id", guardian.getId())
             .expiration(Date.from(Instant.now().plusMillis(expirationTime)))
             .compact();
     }

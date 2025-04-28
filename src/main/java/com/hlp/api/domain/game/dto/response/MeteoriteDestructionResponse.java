@@ -8,11 +8,12 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.hlp.api.domain.game.model.Game;
+import com.hlp.api.domain.game.model.MeteoriteDestruction;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonNaming(value = SnakeCaseStrategy.class)
-public record GameResponse(
+public record MeteoriteDestructionResponse(
     @Schema(description = "게임 id", example = "1", requiredMode = REQUIRED)
     Integer id,
 
@@ -32,13 +33,13 @@ public record GameResponse(
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm")
     LocalDateTime createdAt
 ) {
-    public static GameResponse of(Game game) {
-        return new GameResponse(
+    public static MeteoriteDestructionResponse of(Game game, MeteoriteDestruction meteoriteDestruction) {
+        return new MeteoriteDestructionResponse(
             game.getId(),
             game.getResult().getDescription(),
-            game.getScore(),
-            game.hashCode(),
-            game.getMeteoriteBrokenCount(),
+            meteoriteDestruction.getScore(),
+            meteoriteDestruction.getHp(),
+            meteoriteDestruction.getMeteoriteBrokenCount(),
             game.getCreatedAt()
         );
     }

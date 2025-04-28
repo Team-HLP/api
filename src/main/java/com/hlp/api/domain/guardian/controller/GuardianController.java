@@ -1,0 +1,67 @@
+package com.hlp.api.domain.guardian.controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.hlp.api.common.auth.guardian.GuardianAuth;
+import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
+import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
+import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
+import com.hlp.api.domain.guardian.dto.request.GuardianVerifySmsVerificationRequest;
+import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
+import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
+import com.hlp.api.domain.guardian.service.GuardianService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/guardian")
+public class GuardianController implements GuardianApi {
+
+    private final GuardianService guardianService;
+
+    @PostMapping("/login")
+    public ResponseEntity<GuardianLoginResponse> login(
+        @RequestBody @Valid GuardianLoginRequest request
+    ) {
+        GuardianLoginResponse response = guardianService.login(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/sms/send")
+    public ResponseEntity<Void> sendSmsVerificationCode(
+        @RequestBody @Valid GuardianVerificationRequest request
+    ) {
+        guardianService.sendCertificationCode(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/sms/verify")
+    public ResponseEntity<Void> verifySmsVerificationCode(
+        @RequestBody @Valid GuardianVerifySmsVerificationRequest request
+    ) {
+        guardianService.verifySmsVerificationCode(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<Void> register(
+        @RequestBody @Valid GuardianRegisterRequest request
+    ) {
+        guardianService.register(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/me")
+    public ResponseEntity<GuardianResponse> getGuardian(
+        @GuardianAuth Integer guardianId
+    ) {
+        GuardianResponse response = guardianService.getGuardian(guardianId);
+        return ResponseEntity.ok(response);
+    }
+}

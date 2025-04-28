@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hlp.api.admin.game.dto.response.AdminGameDetailResponse;
 import com.hlp.api.admin.game.dto.response.AdminGameResponse;
 import com.hlp.api.admin.game.service.AdminGameService;
 import com.hlp.api.common.auth.admin.AdminAuth;
@@ -30,12 +31,12 @@ public class AdminGameController implements AdminGameApi {
     }
 
     @GetMapping("/admin/game/{gameId}")
-    public ResponseEntity<AdminGameResponse> getGame(
+    public ResponseEntity<AdminGameDetailResponse> getGame(
         @PathVariable(name = "gameId") Integer gameId,
         @RequestParam(name = "user_id") Integer userId,
         @AdminAuth Integer adminId
     ) {
-        AdminGameResponse response = adminGameService.getGame(userId, gameId);
+        AdminGameDetailResponse response = adminGameService.getGame(userId, gameId);
         return ResponseEntity.ok(response);
     }
 }
