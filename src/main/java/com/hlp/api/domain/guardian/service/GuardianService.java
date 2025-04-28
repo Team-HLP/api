@@ -21,6 +21,7 @@ import com.hlp.api.domain.guardian.model.Guardian;
 import com.hlp.api.domain.guardian.model.GuardianCertificationCode;
 import com.hlp.api.domain.guardian.repository.GuardianCertificationCodeRepository;
 import com.hlp.api.domain.guardian.repository.GuardianRepository;
+import com.hlp.api.domain.user.exception.UserLoginIdDuplicateException;
 import com.hlp.api.domain.user.exception.UserPhoneNumberDuplicateException;
 import com.hlp.api.domain.user.exception.UserWithDrawException;
 
@@ -50,9 +51,15 @@ public class GuardianService {
 
     @Transactional
     public void sendCertificationCode(GuardianVerificationRequest request) {
+        String phoneNum = request.phoneNumber().replaceAll("-","");
+
+        guardianRepository.findByPhoneNumber(phoneNum)
+            .ifPresent(guardian -> {
+                throw new UserPhoneNumberDuplicateException("등록된 전화번호입니다");
+            });
+
         Random random = new Random();
 
-        String phoneNum = request.phoneNumber().replaceAll("-","");
         if (guardianRepository.findByLoginId(phoneNum).isPresent()) {
             throw new UserPhoneNumberDuplicateException("등록된 전화번호입니다");
         }
@@ -68,6 +75,11 @@ public class GuardianService {
         guardianRepository.findByPhoneNumber(request.phoneNumber())
             .ifPresent(guardian -> {
                 throw new UserPhoneNumberDuplicateException("등록된 전화번호입니다");
+            });
+
+        guardianRepository.findByLoginId(request.loginId())
+            .ifPresent(guardian -> {
+                throw new UserLoginIdDuplicateException("등록된 아이디입니다");
             });
 
         Guardian guardian = request.toEntity(passwordEncoder.encode(request.password()));
