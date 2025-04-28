@@ -1,6 +1,9 @@
 package com.hlp.api.domain.guardian.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +14,7 @@ import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerifySmsVerificationRequest;
+import com.hlp.api.domain.guardian.dto.response.ChildrenResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
 import com.hlp.api.domain.guardian.service.GuardianService;
@@ -63,5 +67,13 @@ public class GuardianController implements GuardianApi {
     ) {
         GuardianResponse response = guardianService.getGuardian(guardianId);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/children")
+    public ResponseEntity<List<ChildrenResponse>> getChildren(
+        @GuardianAuth Integer guardianId
+    ) {
+        List<ChildrenResponse> responses = guardianService.getChildren(guardianId);
+        return ResponseEntity.ok(responses);
     }
 }
