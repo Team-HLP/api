@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.hlp.api.common.auth.user.UserAuth;
 import com.hlp.api.domain.game.dto.request.MeteoriteCreateRequest;
+import com.hlp.api.domain.game.dto.request.MoleCreateRequest;
 import com.hlp.api.domain.game.model.GameCategory;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,6 +37,23 @@ public interface GameApi {
     @PostMapping("/game/meteorite")
     ResponseEntity<Void> crateMeteorite(
         @RequestPart("request") @Valid MeteoriteCreateRequest request,
+        @RequestPart("eeg_data_file") MultipartFile eegDataFile,
+        @RequestPart("eye_data_file") MultipartFile eyeDataFile,
+        @UserAuth Integer userId
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "두더지 잡기 게임 정보 생성")
+    @PostMapping("/game/mole")
+    ResponseEntity<Void> createMole(
+        @RequestPart("request") @Valid MoleCreateRequest request,
         @RequestPart("eeg_data_file") MultipartFile eegDataFile,
         @RequestPart("eye_data_file") MultipartFile eyeDataFile,
         @UserAuth Integer userId

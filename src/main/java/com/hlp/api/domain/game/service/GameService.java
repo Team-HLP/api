@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.hlp.api.common.config.FileStorageProperties;
 import com.hlp.api.domain.game.dto.request.MeteoriteCreateRequest;
+import com.hlp.api.domain.game.dto.request.MoleCreateRequest;
 import com.hlp.api.domain.game.dto.response.MeteoriteDestructionResponse;
 import com.hlp.api.domain.game.exception.DataFileSaveException;
 import com.hlp.api.domain.game.model.Game;
@@ -48,6 +49,13 @@ public class GameService {
         String path = String.format(fileStorageProperties.path(), System.getProperty("user.dir"), user.getId(), game.getId());
         saveJsonFile(eegDataFile, path);
         saveJsonFile(eyeDatafile, path);
+    }
+
+    @Transactional
+    public void crateMole(
+        MoleCreateRequest request, MultipartFile eegDataFile, MultipartFile eyeDatafile, Integer userId
+    ) {
+
     }
 
     private void saveJsonFile(MultipartFile jsonFile, String path) {
