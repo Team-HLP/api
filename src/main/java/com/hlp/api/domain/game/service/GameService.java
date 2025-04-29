@@ -88,6 +88,8 @@ public class GameService {
                 })
                 .collect(Collectors.toList());
         }
-        return Collections.emptyList();
+        else {
+            return Collections.emptyList();
+        }
     }
 }

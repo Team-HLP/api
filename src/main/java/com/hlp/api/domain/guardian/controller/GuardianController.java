@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hlp.api.common.auth.guardian.GuardianAuth;
@@ -71,10 +72,11 @@ public class GuardianController implements GuardianApi {
     }
 
     @GetMapping("/children")
-    public ResponseEntity<List<ChildrenResponse>> getChildren(
+    public ResponseEntity<ChildrenResponse> getChildren(
+        @RequestParam(name = "children_id") String childrenId,
         @GuardianAuth Integer guardianId
     ) {
-        List<ChildrenResponse> responses = guardianService.getChildren(guardianId);
+        ChildrenResponse responses = guardianService.getChildren(childrenId, guardianId);
         return ResponseEntity.ok(responses);
     }
 

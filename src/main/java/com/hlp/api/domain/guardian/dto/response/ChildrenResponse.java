@@ -20,14 +20,19 @@ public record ChildrenResponse(
     Integer age,
 
     @Schema(description = "성별", example = "남", requiredMode = REQUIRED)
-    String sex
+    String sex,
+
+    @Schema(description = "전화번호", example = "010-1234-5678", requiredMode = REQUIRED)
+    String phoneNumber
+
 ) {
     public static ChildrenResponse of(User user) {
         return new ChildrenResponse(
             user.getId(),
             user.getName(),
             user.getAge(),
-            user.getSex().getDescription()
+            user.getSex().getDescription(),
+            user.getPhoneNumber()
         );
     }
 }
