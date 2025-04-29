@@ -5,7 +5,7 @@ import java.util.List;
 public record EyeData(
     BasePupilSize basePupilSize,
     List<PupilRecord> pupilRecords,
-    Integer totalBlinkEyeCount
+    Integer blinkEyeCount
 ) {
     private static final Double TOLERANCE = 0.5;
 
