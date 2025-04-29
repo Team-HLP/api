@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hlp.api.admin.game.model.EyeData;
 import com.hlp.api.common.config.FileStorageProperties;
 import com.hlp.api.domain.game.dto.request.MeteoriteCreateRequest;
 import com.hlp.api.domain.game.dto.response.MeteoriteDestructionResponse;
@@ -34,7 +32,6 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class GameService {
 
-    private final ObjectMapper objectMapper;
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final FileStorageProperties fileStorageProperties;
@@ -42,24 +39,15 @@ public class GameService {
 
     @Transactional
     public void crateMeteorite(
-        MeteoriteCreateRequest request, MultipartFile eyeDatafile, Integer userId
+        MeteoriteCreateRequest request, MultipartFile eegDataFile, MultipartFile eyeDatafile, Integer userId
     ) {
         User user = userRepository.getById(userId);
-        EyeData eyeData = readEyeDataFile(eyeDatafile);
-        Game game = gameRepository.save(request.toGame(user, eyeData));
+        Game game = gameRepository.save(request.toGame(user));
         meteoriteDestructionRepository.save(request.toMeteoriteDestruction(game));
 
         String path = String.format(fileStorageProperties.path(), System.getProperty("user.dir"), user.getId(), game.getId());
-        // saveJsonFile(eegDatafile, path);
+        saveJsonFile(eegDataFile, path);
         saveJsonFile(eyeDatafile, path);
-    }
-
-    private EyeData readEyeDataFile(MultipartFile eyeDatafile) {
-        try {
-            return objectMapper.readValue(eyeDatafile.getInputStream(), EyeData.class);
-        } catch (Exception e) {
-            throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
-        }
     }
 
     private void saveJsonFile(MultipartFile jsonFile, String path) {

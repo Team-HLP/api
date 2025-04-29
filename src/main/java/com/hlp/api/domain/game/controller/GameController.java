@@ -27,11 +27,11 @@ public class GameController implements GameApi{
     @PostMapping("/game/meteorite")
     public ResponseEntity<Void> crateMeteorite(
         @RequestPart("request") @Valid MeteoriteCreateRequest request,
-        // @RequestPart("eeg_data_file") MultipartFile eegDataFile,
+        @RequestPart("eeg_data_file") MultipartFile eegDataFile,
         @RequestPart("eye_data_file") MultipartFile eyeDataFile,
         @UserAuth Integer userId
     ) {
-        gameService.crateMeteorite(request, eyeDataFile, userId);
+        gameService.crateMeteorite(request, eegDataFile, eyeDataFile, userId);
         return ResponseEntity.ok().build();
     }
 
