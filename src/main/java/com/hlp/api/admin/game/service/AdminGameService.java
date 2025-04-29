@@ -10,9 +10,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hlp.api.admin.game.dto.response.AdminGameDetailResponse;
 import com.hlp.api.admin.game.dto.response.AdminGameResponse;
+import com.hlp.api.admin.game.model.EegData;
 import com.hlp.api.admin.game.model.EyeData;
 import com.hlp.api.admin.game.repository.AdminGameRepository;
 import com.hlp.api.common.config.FileStorageProperties;
@@ -51,15 +53,22 @@ public class AdminGameService {
 
         String path = String.format(fileStorageProperties.path(), System.getProperty("user.dir"), user.getId(), game.getId());
 
-        File eyeDataFilePath = new File(path, "eye_data_file.json");
+        File eyeDataFilePath = new File(path, "eye_data.json");
+        File eegDataFilePath = new File(path, "eeg_data.json");
         EyeData eyeData;
+        List<EegData> eegData;
 
         try {
             eyeData = objectMapper.readValue(eyeDataFilePath, EyeData.class);
+            eegData = objectMapper.readValue(
+                eegDataFilePath,
+                new TypeReference<>() {
+                }
+            );
         } catch (IOException e) {
             throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
         }
 
-        return AdminGameDetailResponse.of(eyeData);
+        return AdminGameDetailResponse.of(eyeData, eegData);
     }
 }

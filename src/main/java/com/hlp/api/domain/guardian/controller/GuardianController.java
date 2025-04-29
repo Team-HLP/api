@@ -1,16 +1,20 @@
 package com.hlp.api.domain.guardian.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hlp.api.common.auth.guardian.GuardianAuth;
+import com.hlp.api.domain.guardian.dto.request.GuardianChildrenRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerifySmsVerificationRequest;
+import com.hlp.api.domain.guardian.dto.response.ChildrenResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
 import com.hlp.api.domain.guardian.service.GuardianService;
@@ -64,4 +68,24 @@ public class GuardianController implements GuardianApi {
         GuardianResponse response = guardianService.getGuardian(guardianId);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/children")
+    public ResponseEntity<ChildrenResponse> getChildren(
+        @RequestParam(name = "children_id") String childrenId,
+        @GuardianAuth Integer guardianId
+    ) {
+        ChildrenResponse responses = guardianService.getChildren(childrenId, guardianId);
+        return ResponseEntity.ok(responses);
+    }
+
+    @PostMapping("/children")
+    public ResponseEntity<Void> registerChildren(
+        @RequestBody @Valid GuardianChildrenRegisterRequest request,
+        @GuardianAuth Integer guardianId
+    ) {
+        guardianService.registerChildren(guardianId, request);
+        return ResponseEntity.ok().build();
+    }
+
+
 }

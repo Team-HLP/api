@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.hlp.api.common.auth.user.UserAuth;
 import com.hlp.api.domain.game.dto.request.MeteoriteCreateRequest;
+import com.hlp.api.domain.game.dto.request.MoleCreateRequest;
 import com.hlp.api.domain.game.model.GameCategory;
 import com.hlp.api.domain.game.service.GameService;
 
@@ -27,11 +28,21 @@ public class GameController implements GameApi{
     @PostMapping("/game/meteorite")
     public ResponseEntity<Void> crateMeteorite(
         @RequestPart("request") @Valid MeteoriteCreateRequest request,
-        // @RequestPart("eeg_data_file") MultipartFile eegDataFile,
+        @RequestPart("eeg_data_file") MultipartFile eegDataFile,
         @RequestPart("eye_data_file") MultipartFile eyeDataFile,
         @UserAuth Integer userId
     ) {
-        gameService.crateMeteorite(request, eyeDataFile, userId);
+        gameService.crateMeteorite(request, eegDataFile, eyeDataFile, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/game/mole")
+    public ResponseEntity<Void> createMole(
+        @RequestPart("request") @Valid MoleCreateRequest request,
+        @RequestPart("eeg_data_file") MultipartFile eegDataFile,
+        @RequestPart("eye_data_file") MultipartFile eyeDataFile,
+        @UserAuth Integer userId
+    ) {
         return ResponseEntity.ok().build();
     }
 

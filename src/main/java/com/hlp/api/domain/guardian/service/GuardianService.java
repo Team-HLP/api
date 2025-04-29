@@ -2,7 +2,9 @@ package com.hlp.api.domain.guardian.service;
 
 import static com.hlp.api.common.auth.validation.PasswordValidator.checkPasswordMatches;
 
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,20 +12,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hlp.api.common.auth.JwtProvider;
 import com.hlp.api.common.util.SmsUtil;
+import com.hlp.api.domain.guardian.dto.request.GuardianChildrenRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerifySmsVerificationRequest;
+import com.hlp.api.domain.guardian.dto.response.ChildrenResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
 import com.hlp.api.domain.guardian.exception.CertificationCodeNotEqualException;
 import com.hlp.api.domain.guardian.model.Guardian;
 import com.hlp.api.domain.guardian.model.GuardianCertificationCode;
+import com.hlp.api.domain.guardian.model.GuardianChildrenMap;
 import com.hlp.api.domain.guardian.repository.GuardianCertificationCodeRepository;
+import com.hlp.api.domain.guardian.repository.GuardianChildrenMapRepository;
 import com.hlp.api.domain.guardian.repository.GuardianRepository;
 import com.hlp.api.domain.user.exception.UserLoginIdDuplicateException;
 import com.hlp.api.domain.user.exception.UserPhoneNumberDuplicateException;
 import com.hlp.api.domain.user.exception.UserWithDrawException;
+import com.hlp.api.domain.user.model.User;
+import com.hlp.api.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +41,8 @@ import lombok.RequiredArgsConstructor;
 public class GuardianService {
 
     private final GuardianCertificationCodeRepository guardianCertificationCodeRepository;
+    private final GuardianChildrenMapRepository guardianChildrenMapRepository;
+    private final UserRepository childrenRepository;
     private final GuardianRepository guardianRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
@@ -98,5 +108,19 @@ public class GuardianService {
             throw new CertificationCodeNotEqualException("인증번호가 일치하지 않습니다.");
         }
         guardianCertificationCodeRepository.delete(byVerify);
+    }
+
+    public ChildrenResponse getChildren(String childrenId, Integer guardianId) {
+        guardianRepository.getById(guardianId);
+        User children = childrenRepository.getByLoginId(childrenId);
+
+        return ChildrenResponse.of(children);
+    }
+
+    @Transactional
+    public void registerChildren(Integer guardianId, GuardianChildrenRegisterRequest request) {
+        Guardian guardian = guardianRepository.getById(guardianId);
+        User children = childrenRepository.getById(request.childrenId());
+        guardianChildrenMapRepository.save(request.toEntity(children, guardian));
     }
 }
