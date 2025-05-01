@@ -11,6 +11,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.hlp.api.common.auth.user.UserAuth;
 import com.hlp.api.common.auth.user.UserAuthContext;
+import com.hlp.api.domain.guardian.model.Guardian;
+import com.hlp.api.domain.guardian.repository.GuardianRepository;
 import com.hlp.api.domain.user.model.User;
 import com.hlp.api.domain.user.repository.UserRepository;
 
@@ -20,23 +22,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GuardianArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final UserRepository userRepository;
+    private final GuardianRepository guardianRepository;
     private final UserAuthContext userAuthContext;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(UserAuth.class);
+        return parameter.hasParameterAnnotation(GuardianAuth.class);
     }
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-        UserAuth userAuth = parameter.getParameterAnnotation(UserAuth.class);
-        requireNonNull(userAuth);
+        GuardianAuth guardianAuth = parameter.getParameterAnnotation(GuardianAuth.class);
+        requireNonNull(guardianAuth);
 
         Integer userId = userAuthContext.getUserId();
-        User user = userRepository.getById(userId);
-        return user.getId();
+        Guardian guardian = guardianRepository.getById(userId);
+        return guardian.getId();
     }
 }
