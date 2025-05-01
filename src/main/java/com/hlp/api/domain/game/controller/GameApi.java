@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +37,7 @@ public interface GameApi {
     @Operation(summary = "운석 파괴 게임 정보 생성")
     @PostMapping("/game/meteorite")
     ResponseEntity<Void> crateMeteorite(
-        @RequestPart("request") @Valid MeteoriteCreateRequest request,
+        @RequestBody @Valid MeteoriteCreateRequest request,
         // @RequestPart("eeg_data_file") MultipartFile eegDataFile,
         // @RequestPart("eye_data_file") MultipartFile eyeDataFile,
         @UserAuth Integer userId
