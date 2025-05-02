@@ -1,11 +1,13 @@
 package com.hlp.api.domain.guardian.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hlp.api.common.auth.guardian.GuardianAuth;
@@ -69,12 +71,12 @@ public class GuardianController implements GuardianApi {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/children")
-    public ResponseEntity<ChildrenResponse> getChildren(
-        @RequestParam(name = "children_id") String childrenId,
+    @GetMapping("/children/{childrenId}")
+    public ResponseEntity<ChildrenResponse> getChild(
+        @PathVariable(name = "childrenId") Integer childrenId,
         @GuardianAuth Integer guardianId
     ) {
-        ChildrenResponse responses = guardianService.getChildren(childrenId, guardianId);
+        ChildrenResponse responses = guardianService.getChild(childrenId, guardianId);
         return ResponseEntity.ok(responses);
     }
 
@@ -87,5 +89,11 @@ public class GuardianController implements GuardianApi {
         return ResponseEntity.ok().build();
     }
 
-
+    @PostMapping("/children")
+    public ResponseEntity<List<ChildrenResponse>> getChildren(
+        @GuardianAuth Integer guardianId
+    ) {
+        List<ChildrenResponse> response = guardianService.getChildren(guardianId);
+        return ResponseEntity.ok(response);
+    }
 }

@@ -110,11 +110,9 @@ public class GuardianService {
         guardianCertificationCodeRepository.delete(byVerify);
     }
 
-    public ChildrenResponse getChildren(String childrenId, Integer guardianId) {
-        guardianRepository.getById(guardianId);
-        User children = childrenRepository.getByLoginId(childrenId);
-
-        return ChildrenResponse.of(children);
+    public ChildrenResponse getChild(Integer childrenId, Integer guardianId) {
+        GuardianChildrenMap guardianChildrenMap = guardianChildrenMapRepository.getByGuardianIdAndChildrenId(guardianId, childrenId);
+        return ChildrenResponse.of(guardianChildrenMap.getChildren());
     }
 
     @Transactional
@@ -122,5 +120,12 @@ public class GuardianService {
         Guardian guardian = guardianRepository.getById(guardianId);
         User children = childrenRepository.getById(request.childrenId());
         guardianChildrenMapRepository.save(request.toEntity(children, guardian));
+    }
+
+    public List<ChildrenResponse> getChildren(Integer guardianId) {
+        Guardian guardian = guardianRepository.getById(guardianId);
+        return guardianChildrenMapRepository.getByGuardianId(guardian.getId()).stream()
+            .map(guardianChildrenMap -> ChildrenResponse.of(guardianChildrenMap.getChildren()))
+            .toList();
     }
 }

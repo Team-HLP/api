@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -109,10 +110,10 @@ public interface GuardianApi {
             @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
         }
     )
-    @Operation(summary = "자녀 목록 조회")
-    @GetMapping("/children")
-    ResponseEntity<ChildrenResponse >getChildren(
-        @RequestParam(name = "children_id") String childrenId,
+    @Operation(summary = "등록된 자녀 단건 조회")
+    @GetMapping("/children/{childrenId}")
+    ResponseEntity<ChildrenResponse> getChild(
+        @PathVariable(name = "childrenId") Integer childrenId,
         @GuardianAuth Integer guardianId
     );
 
@@ -128,6 +129,20 @@ public interface GuardianApi {
     @PostMapping("/children")
     ResponseEntity<Void> registerChildren(
         @RequestBody @Valid GuardianChildrenRegisterRequest request,
+        @GuardianAuth Integer guardianId
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "등록된 자녀 리스트 등록")
+    @PostMapping("/children")
+    ResponseEntity<List<ChildrenResponse>> getChildren(
         @GuardianAuth Integer guardianId
     );
 }
