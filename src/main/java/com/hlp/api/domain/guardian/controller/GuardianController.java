@@ -89,7 +89,7 @@ public class GuardianController implements GuardianApi {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/children")
+    @GetMapping("/children")
     public ResponseEntity<List<ChildrenResponse>> getChildren(
         @GuardianAuth Integer guardianId
     ) {

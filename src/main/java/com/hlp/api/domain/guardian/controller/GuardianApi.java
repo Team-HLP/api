@@ -141,7 +141,7 @@ public interface GuardianApi {
         }
     )
     @Operation(summary = "등록된 자녀 리스트 등록")
-    @PostMapping("/children")
+    @GetMapping("/children")
     ResponseEntity<List<ChildrenResponse>> getChildren(
         @GuardianAuth Integer guardianId
     );
