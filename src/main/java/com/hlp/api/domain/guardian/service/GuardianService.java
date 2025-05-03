@@ -21,6 +21,7 @@ import com.hlp.api.domain.guardian.dto.response.ChildrenResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
 import com.hlp.api.domain.guardian.exception.CertificationCodeNotEqualException;
+import com.hlp.api.domain.guardian.exception.DuplicateRegisterChildren;
 import com.hlp.api.domain.guardian.model.Guardian;
 import com.hlp.api.domain.guardian.model.GuardianCertificationCode;
 import com.hlp.api.domain.guardian.model.GuardianChildrenMap;
@@ -119,6 +120,12 @@ public class GuardianService {
     public void registerChildren(Integer guardianId, GuardianChildrenRegisterRequest request) {
         Guardian guardian = guardianRepository.getById(guardianId);
         User children = childrenRepository.getById(request.childrenId());
+
+        guardianChildrenMapRepository.findByGuardianIdAndChildrenId(guardian.getId(), children.getId())
+                .ifPresent(guardianChildrenMap -> {
+                    throw new DuplicateRegisterChildren("등록 된 자녀입니다.");
+                });
+
         guardianChildrenMapRepository.save(request.toEntity(children, guardian));
     }
 
