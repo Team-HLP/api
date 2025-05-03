@@ -20,4 +20,8 @@ public interface GuardianChildrenMapRepository extends Repository<GuardianChildr
         return findByGuardianIdAndChildrenId(guardianId, childId)
             .orElseThrow(() -> new NotMatchGuardianChild("등록된 자녀가 아닙니다."));
     }
+
+    void deleteAllByGuardianId(Integer guardianId);
+
+    void deleteAllByChildrenId(Integer childId);
 }

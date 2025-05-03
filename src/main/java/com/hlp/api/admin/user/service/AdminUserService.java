@@ -22,6 +22,7 @@ import com.hlp.api.admin.user.repository.AdminUserRepository;
 import com.hlp.api.common.auth.JwtProvider;
 import com.hlp.api.common.auth.validation.PasswordValidator;
 import com.hlp.api.domain.game.model.Game;
+import com.hlp.api.domain.guardian.repository.GuardianChildrenMapRepository;
 import com.hlp.api.domain.user.model.User;
 import com.hlp.api.domain.user.repository.UserRepository;
 
@@ -32,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AdminUserService {
 
+    private final GuardianChildrenMapRepository guardianChildrenMapRepository;
     private final AdminGameRepository adminGameRepository;
     private final AdminUserRepository adminUserRepository;
     private final PasswordEncoder passwordEncoder;
@@ -72,6 +74,7 @@ public class AdminUserService {
     public void userWithdraw(Integer userId) {
         User user = userRepository.getById(userId);
         adminGameRepository.findAllByUserId(userId).forEach(Game::delete);
+        guardianChildrenMapRepository.deleteAllByChildrenId(userId);
         user.withdraw();
     }
 
