@@ -160,7 +160,7 @@ public interface GuardianApi {
             @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
         }
     )
-    @Operation(summary = "등록된 자녀 리스트 등록")
+    @Operation(summary = "등록된 자녀 리스트 조회")
     @GetMapping("/children")
     ResponseEntity<List<ChildrenResponse>> getChildren(
         @GuardianAuth Integer guardianId
