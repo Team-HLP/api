@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hlp.api.common.auth.guardian.GuardianAuth;
+import com.hlp.api.domain.guardian.dto.request.ChildrenRegisterVerifyRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianChildrenRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
@@ -86,6 +87,15 @@ public class GuardianController implements GuardianApi {
         @GuardianAuth Integer guardianId
     ) {
         guardianService.registerChildren(guardianId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/children/verify")
+    public ResponseEntity<Void> verifyChildrenRegister(
+        @RequestBody @Valid ChildrenRegisterVerifyRequest request,
+        @GuardianAuth Integer guardianId
+    ) {
+        guardianService.verifyChildrenRegister(guardianId, request);
         return ResponseEntity.ok().build();
     }
 

@@ -3,6 +3,7 @@ package com.hlp.api.domain.guardian.service;
 import static com.hlp.api.common.auth.validation.PasswordValidator.checkPasswordMatches;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hlp.api.common.auth.JwtProvider;
 import com.hlp.api.common.util.SmsUtil;
+import com.hlp.api.domain.guardian.dto.request.ChildrenRegisterVerifyRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianChildrenRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
@@ -119,14 +121,41 @@ public class GuardianService {
     @Transactional
     public void registerChildren(Integer guardianId, GuardianChildrenRegisterRequest request) {
         Guardian guardian = guardianRepository.getById(guardianId);
-        User children = childrenRepository.getById(request.childrenId());
+        User children = childrenRepository.getByLoginId(request.childrenId());
 
         guardianChildrenMapRepository.findByGuardianIdAndChildrenId(guardian.getId(), children.getId())
                 .ifPresent(guardianChildrenMap -> {
                     throw new DuplicateRegisterChildren("등록 된 자녀입니다.");
                 });
 
-        guardianChildrenMapRepository.save(request.toEntity(children, guardian));
+        String phoneNumber = children.getPhoneNumber().replaceAll("-", "");
+        Random random = new Random();
+        String certificationCode = String.valueOf(random.nextInt(900000) + 100000);
+        // smsUtil.sendOne(phoneNum, certificationCode);
+
+        guardianCertificationCodeRepository.save(GuardianCertificationCode.of(phoneNumber, certificationCode));
+    }
+
+    @Transactional
+    public void verifyChildrenRegister(Integer guardianId, ChildrenRegisterVerifyRequest request) {
+        Guardian guardian = guardianRepository.getById(guardianId);
+        User children = childrenRepository.getByLoginId(request.childrenId());
+
+        guardianChildrenMapRepository.findByGuardianIdAndChildrenId(guardian.getId(), children.getId())
+            .ifPresent(guardianChildrenMap -> {
+                throw new DuplicateRegisterChildren("등록 된 자녀입니다.");
+            });
+
+        GuardianCertificationCode byVerify = guardianCertificationCodeRepository.getByPhoneNumber(children.getPhoneNumber());
+        if (!request.certificationCode().equals(byVerify.getCertificationCode())) {
+            throw new CertificationCodeNotEqualException("인증번호가 일치하지 않습니다.");
+        }
+
+        guardianCertificationCodeRepository.delete(byVerify);
+        guardianChildrenMapRepository.save(GuardianChildrenMap.builder()
+            .children(children)
+            .guardian(guardian)
+            .build());
     }
 
     public List<ChildrenResponse> getChildren(Integer guardianId) {

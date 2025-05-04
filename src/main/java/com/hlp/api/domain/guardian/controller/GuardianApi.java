@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hlp.api.common.auth.guardian.GuardianAuth;
+import com.hlp.api.domain.guardian.dto.request.ChildrenRegisterVerifyRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianChildrenRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
@@ -125,10 +126,29 @@ public interface GuardianApi {
             @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
         }
     )
-    @Operation(summary = "자녀 등록")
+    @Operation(summary = "자녀 등록 요청", description = """
+        자녀 로그인 아이디를 입력해서 요청을 보내면, 자녀 정보에 등록된 전화번호로 인증번호가 전송됩니다.
+        """)
     @PostMapping("/children")
     ResponseEntity<Void> registerChildren(
         @RequestBody @Valid GuardianChildrenRegisterRequest request,
+        @GuardianAuth Integer guardianId
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "자녀 등록 인증", description = """
+        인증번호 인증에 성공하면, 자동으로 자녀 등록이 됩니다.
+        """)
+    @PostMapping("/children/verify")
+    ResponseEntity<Void> verifyChildrenRegister(
+        @RequestBody @Valid ChildrenRegisterVerifyRequest request,
         @GuardianAuth Integer guardianId
     );
 
