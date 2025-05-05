@@ -40,16 +40,16 @@ public class GameService {
 
     @Transactional
     public void crateMeteorite(
-        MeteoriteCreateRequest request, MultipartFile eegDataFile, MultipartFile eyeDatafile, Integer userId
-        // MeteoriteCreateRequest request, Integer userId
+        // MeteoriteCreateRequest request, MultipartFile eegDataFile, MultipartFile eyeDatafile, Integer userId
+        MeteoriteCreateRequest request, Integer userId
     ) {
         User user = userRepository.getById(userId);
         Game game = gameRepository.save(request.toGame(user));
         meteoriteDestructionRepository.save(request.toMeteoriteDestruction(game));
 
-        String path = String.format(fileStorageProperties.path(), System.getProperty("user.dir"), user.getId(), game.getId());
-        saveJsonFile(eegDataFile, path);
-        saveJsonFile(eyeDatafile, path);
+        // String path = String.format(fileStorageProperties.path(), System.getProperty("user.dir"), user.getId(), game.getId());
+        // saveJsonFile(eegDataFile, path);
+        // saveJsonFile(eyeDatafile, path);
     }
 
     @Transactional
