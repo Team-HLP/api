@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hlp.api.admin.game.dto.response.AdminGameDetailResponse;
 import com.hlp.api.admin.game.dto.response.AdminGameResponse;
+import com.hlp.api.admin.game.dto.response.AdminGameStatisticsResponse;
 import com.hlp.api.common.auth.admin.AdminAuth;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,6 +49,21 @@ public interface AdminGameApi {
     @GetMapping("/admin/game/{gameId}")
     ResponseEntity<AdminGameDetailResponse> getGame(
         @PathVariable(name = "gameId") Integer gameId,
+        @RequestParam(name = "user_id") Integer userId,
+        @AdminAuth Integer adminId
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "게임 통계 조회")
+    @GetMapping("/admin/game/statistics")
+    ResponseEntity<List<AdminGameStatisticsResponse>> getGameStatistics(
         @RequestParam(name = "user_id") Integer userId,
         @AdminAuth Integer adminId
     );

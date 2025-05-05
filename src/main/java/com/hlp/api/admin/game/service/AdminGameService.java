@@ -1,9 +1,11 @@
 package com.hlp.api.admin.game.service;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE;
+import static com.hlp.api.domain.game.model.Result.SUCCESS;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,8 +16,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hlp.api.admin.game.dto.response.AdminGameDetailResponse;
 import com.hlp.api.admin.game.dto.response.AdminGameResponse;
+import com.hlp.api.admin.game.dto.response.AdminGameStatisticsResponse;
+import com.hlp.api.admin.game.model.BioData;
 import com.hlp.api.admin.game.model.EegData;
 import com.hlp.api.admin.game.model.EyeData;
+import com.hlp.api.admin.game.model.TBRConversionProperties;
 import com.hlp.api.admin.game.repository.AdminGameRepository;
 import com.hlp.api.common.config.FileStorageProperties;
 import com.hlp.api.domain.game.exception.DataFileSaveException;
@@ -31,14 +36,26 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AdminGameService {
 
+    private final TBRConversionProperties tbrConversionProperties;
     private final FileStorageProperties fileStorageProperties;
     private final AdminGameRepository adminGameRepository;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
+    private final List<TBRStandard> standards = new ArrayList<>();
+
     @PostConstruct
     public void init() {
         objectMapper.setPropertyNamingStrategy(SNAKE_CASE);
+
+        TBRConversionProperties.Minus minus = tbrConversionProperties.minus();
+        standards.add(new TBRStandard(minus.score(), minus.standard().over(), minus.standard().blew()));
+
+        TBRConversionProperties.Plus plus = tbrConversionProperties.plus();
+        standards.add(new TBRStandard(plus.score(), plus.standard().over(), plus.standard().blew()));
+
+        TBRConversionProperties.Zero zero = tbrConversionProperties.zero();
+        standards.add(new TBRStandard(zero.score(), zero.standard().over(), zero.standard().blew()));
     }
 
     public List<AdminGameResponse> getGames(Integer userId) {
@@ -51,10 +68,41 @@ public class AdminGameService {
         User user = userRepository.getById(userId);
         Game game = adminGameRepository.getByIdAndUserId(gameId, user.getId());
 
-        String path = String.format(fileStorageProperties.path(), System.getProperty("user.dir"), user.getId(), game.getId());
+        BioData bioData = readBioData(gameId, user.getId());
+
+        return AdminGameDetailResponse.of(bioData.eyeData(), bioData.eegData());
+    }
+
+    public List<AdminGameStatisticsResponse> getGameStatistics(Integer userId) {
+        User user = userRepository.getById(userId);
+        List<Game> games = adminGameRepository.findAllByUserId(user.getId()).stream()
+            .filter(game -> game.getResult().equals(SUCCESS))
+            .toList();
+
+        List<AdminGameStatisticsResponse> responses = new ArrayList<>();
+
+        for (Game game : games) {
+            BioData bioData = readBioData(game.getId(), user.getId());
+            responses.add(AdminGameStatisticsResponse.of(
+                bioData.eyeData().blinkEyeCount(),
+                bioData.eyeData().basePupilSize().left(),
+                bioData.eyeData().basePupilSize().right(),
+                bioData.eyeData().belowBaseLeftPupilCount(),
+                bioData.eyeData().belowBaseRightPupilCount(),
+                calcTBRConversionScore(bioData.eegData()),
+                game.getCreatedAt()
+            ));
+        }
+
+        return responses;
+    }
+
+    private BioData readBioData(Integer gameId, Integer userId) {
+        String path = String.format(fileStorageProperties.path(), System.getProperty("user.dir"), userId, gameId);
 
         File eyeDataFilePath = new File(path, "eye_data.json");
         File eegDataFilePath = new File(path, "eeg_data.json");
+
         EyeData eyeData;
         List<EegData> eegData;
 
@@ -69,6 +117,33 @@ public class AdminGameService {
             throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
         }
 
-        return AdminGameDetailResponse.of(eyeData, eegData);
+        return new BioData(eyeData, eegData);
+    }
+
+    private Double calcTBRConversionScore(List<EegData> eegDatas) {
+        Integer totalScore = 0;
+
+        for (EegData eegData : eegDatas) {
+            Double tbr = eegData.theta() / eegData.beta();
+
+            for (TBRStandard standard : standards) {
+                if (standard.isBetweenTBR(tbr)) {
+                    totalScore += standard.score();
+                    break;
+                }
+            }
+        }
+
+        return (double)((totalScore / tbrConversionProperties.totalScore()) * tbrConversionProperties.conversionScore());
+    }
+
+    private record TBRStandard(
+        Integer score,
+        Integer over,
+        Integer blew
+    ) {
+        public boolean isBetweenTBR(Double tbr) {
+            return over <= tbr && tbr <= blew;
+        }
     }
 }

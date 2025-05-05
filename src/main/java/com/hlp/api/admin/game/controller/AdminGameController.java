@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hlp.api.admin.game.dto.response.AdminGameDetailResponse;
 import com.hlp.api.admin.game.dto.response.AdminGameResponse;
+import com.hlp.api.admin.game.dto.response.AdminGameStatisticsResponse;
 import com.hlp.api.admin.game.service.AdminGameService;
 import com.hlp.api.common.auth.admin.AdminAuth;
 
@@ -37,6 +38,15 @@ public class AdminGameController implements AdminGameApi {
         @AdminAuth Integer adminId
     ) {
         AdminGameDetailResponse response = adminGameService.getGame(userId, gameId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/admin/game/statistics")
+    public ResponseEntity<List<AdminGameStatisticsResponse>> getGameStatistics(
+        @RequestParam(name = "user_id") Integer userId,
+        @AdminAuth Integer adminId
+    ) {
+        List<AdminGameStatisticsResponse> response = adminGameService.getGameStatistics(userId);
         return ResponseEntity.ok(response);
     }
 }
