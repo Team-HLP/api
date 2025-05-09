@@ -22,6 +22,7 @@ import com.hlp.api.admin.game.model.EegData;
 import com.hlp.api.admin.game.model.EyeData;
 import com.hlp.api.admin.game.model.TBRConversionProperties;
 import com.hlp.api.admin.game.repository.AdminGameRepository;
+import com.hlp.api.admin.game.util.BioDataReader;
 import com.hlp.api.common.config.FileStorageProperties;
 import com.hlp.api.domain.game.exception.DataFileSaveException;
 import com.hlp.api.domain.game.model.Game;
@@ -40,14 +41,12 @@ public class AdminGameService {
     private final FileStorageProperties fileStorageProperties;
     private final AdminGameRepository adminGameRepository;
     private final UserRepository userRepository;
-    private final ObjectMapper objectMapper;
+    private final BioDataReader bioDataReader;
 
     private final List<TBRStandard> standards = new ArrayList<>();
 
     @PostConstruct
     public void init() {
-        objectMapper.setPropertyNamingStrategy(SNAKE_CASE);
-
         TBRConversionProperties.Minus minus = tbrConversionProperties.minus();
         standards.add(new TBRStandard(minus.score(), minus.standard().over(), minus.standard().blew()));
 
@@ -68,7 +67,7 @@ public class AdminGameService {
         User user = userRepository.getById(userId);
         Game game = adminGameRepository.getByIdAndUserId(gameId, user.getId());
 
-        BioData bioData = readBioData(gameId, user.getId());
+        BioData bioData = bioDataReader.readBioData(gameId, user.getId());
 
         return AdminGameDetailResponse.of(bioData.eyeData(), bioData.eegData());
     }
@@ -82,7 +81,7 @@ public class AdminGameService {
         List<AdminGameStatisticsResponse> responses = new ArrayList<>();
 
         for (Game game : games) {
-            BioData bioData = readBioData(game.getId(), user.getId());
+            BioData bioData = bioDataReader.readBioData(game.getId(), user.getId());
             responses.add(AdminGameStatisticsResponse.of(
                 bioData.eyeData().blinkEyeCount(),
                 bioData.eyeData().basePupilSize().left(),
@@ -95,29 +94,6 @@ public class AdminGameService {
         }
 
         return responses;
-    }
-
-    private BioData readBioData(Integer gameId, Integer userId) {
-        String path = String.format(fileStorageProperties.path(), System.getProperty("user.dir"), userId, gameId);
-
-        File eyeDataFilePath = new File(path, "eye_data.json");
-        File eegDataFilePath = new File(path, "eeg_data.json");
-
-        EyeData eyeData;
-        List<EegData> eegData;
-
-        try {
-            eyeData = objectMapper.readValue(eyeDataFilePath, EyeData.class);
-            eegData = objectMapper.readValue(
-                eegDataFilePath,
-                new TypeReference<>() {
-                }
-            );
-        } catch (IOException e) {
-            throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
-        }
-
-        return new BioData(eyeData, eegData);
     }
 
     private Double calcTBRConversionScore(List<EegData> eegDatas) {

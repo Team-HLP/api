@@ -11,19 +11,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hlp.api.admin.game.model.BioData;
+import com.hlp.api.admin.game.util.BioDataReader;
 import com.hlp.api.common.auth.JwtProvider;
 import com.hlp.api.common.util.SmsUtil;
+import com.hlp.api.domain.game.model.Game;
+import com.hlp.api.domain.game.repository.GameRepository;
 import com.hlp.api.domain.guardian.dto.request.ChildrenRegisterVerifyRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianChildrenRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerifySmsVerificationRequest;
+import com.hlp.api.domain.guardian.dto.response.ChildADHDStatisticsResponse;
 import com.hlp.api.domain.guardian.dto.response.ChildrenResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
 import com.hlp.api.domain.guardian.exception.CertificationCodeNotEqualException;
 import com.hlp.api.domain.guardian.exception.DuplicateRegisterChildren;
+import com.hlp.api.domain.guardian.model.ADHDStatus;
 import com.hlp.api.domain.guardian.model.Guardian;
 import com.hlp.api.domain.guardian.model.GuardianCertificationCode;
 import com.hlp.api.domain.guardian.model.GuardianChildrenMap;
@@ -48,8 +54,10 @@ public class GuardianService {
     private final UserRepository childrenRepository;
     private final GuardianRepository guardianRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BioDataReader bioDataReader;
     private final JwtProvider jwtProvider;
     private final SmsUtil smsUtil;
+    private final GameRepository gameRepository;
 
     @Transactional
     public GuardianLoginResponse login(GuardianLoginRequest request) {
@@ -163,5 +171,18 @@ public class GuardianService {
         return guardianChildrenMapRepository.getByGuardianId(guardian.getId()).stream()
             .map(guardianChildrenMap -> ChildrenResponse.of(guardianChildrenMap.getChildren()))
             .toList();
+    }
+
+    public ChildADHDStatisticsResponse getChildADHDStatistics(Integer gameId, Integer childrenId, Integer guardianId) {
+        Guardian guardian = guardianRepository.getById(guardianId);
+        User children = childrenRepository.getById(childrenId);
+        Game game = gameRepository.getById(gameId);
+        guardianChildrenMapRepository.getByGuardianIdAndChildrenId(guardian.getId(), children.getId());
+
+        BioData bioData = bioDataReader.readBioData(game.getId(), guardian.getId());
+
+        // TODO. 로직 구현하기
+
+        return ChildADHDStatisticsResponse.from(45, 45, ADHDStatus.CAUTION);
     }
 }
