@@ -41,11 +41,13 @@ public class GameController implements GameApi{
 
     @PostMapping("/game/mole")
     public ResponseEntity<Void> createMole(
-        @RequestPart("request") @Valid MoleCreateRequest request,
-        @RequestPart("eeg_data_file") MultipartFile eegDataFile,
-        @RequestPart("eye_data_file") MultipartFile eyeDataFile,
+        @RequestBody @Valid MoleCreateRequest request,
+        // @RequestPart("request") @Valid MoleCreateRequest request,
+        // @RequestPart("eeg_data_file") MultipartFile eegDataFile,
+        // @RequestPart("eye_data_file") MultipartFile eyeDataFile,
         @UserAuth Integer userId
     ) {
+        gameService.crateMole(request, userId);
         return ResponseEntity.ok().build();
     }
 

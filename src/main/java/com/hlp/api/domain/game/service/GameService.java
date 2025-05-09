@@ -23,6 +23,7 @@ import com.hlp.api.domain.game.model.GameCategory;
 import com.hlp.api.domain.game.model.MeteoriteDestruction;
 import com.hlp.api.domain.game.repository.GameRepository;
 import com.hlp.api.domain.game.repository.MeteoriteDestructionRepository;
+import com.hlp.api.domain.game.repository.MoleCatchRepository;
 import com.hlp.api.domain.user.model.User;
 import com.hlp.api.domain.user.repository.UserRepository;
 
@@ -35,7 +36,7 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
-    private final FileStorageProperties fileStorageProperties;
+    private final MoleCatchRepository moleCatchRepository;
     private final MeteoriteDestructionRepository meteoriteDestructionRepository;
 
     @Transactional
@@ -54,9 +55,16 @@ public class GameService {
 
     @Transactional
     public void crateMole(
-        MoleCreateRequest request, MultipartFile eegDataFile, MultipartFile eyeDatafile, Integer userId
+        // MoleCreateRequest request, MultipartFile eegDataFile, MultipartFile eyeDatafile, Integer userId
+        MoleCreateRequest request, Integer userId
     ) {
+        User user = userRepository.getById(userId);
+        Game game = gameRepository.save(request.toGame(user));
+        moleCatchRepository.save(request.toMoleCatch(game));
 
+        // String path = String.format(fileStorageProperties.path(), System.getProperty("user.dir"), user.getId(), game.getId());
+        // saveJsonFile(eegDataFile, path);
+        // saveJsonFile(eyeDatafile, path);
     }
 
     private void saveJsonFile(MultipartFile jsonFile, String path) {
