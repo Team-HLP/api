@@ -37,10 +37,10 @@ public interface GameApi {
     @Operation(summary = "운석 파괴 게임 정보 생성")
     @PostMapping("/game/meteorite")
     ResponseEntity<Void> crateMeteorite(
-        @RequestBody @Valid MeteoriteCreateRequest request,
-        // @RequestPart("request") @Valid MeteoriteCreateRequest request,
-        // @RequestPart("eeg_data_file") MultipartFile eegDataFile,
-        // @RequestPart("eye_data_file") MultipartFile eyeDataFile,
+        // @RequestBody @Valid MeteoriteCreateRequest request,
+        @RequestPart("request") @Valid MeteoriteCreateRequest request,
+        @RequestPart("eeg_data_file") MultipartFile eegDataFile,
+        @RequestPart("eye_data_file") MultipartFile eyeDataFile,
         @UserAuth Integer userId
     );
 
@@ -55,10 +55,10 @@ public interface GameApi {
     @Operation(summary = "두더지 잡기 게임 정보 생성")
     @PostMapping("/game/mole")
     ResponseEntity<Void> createMole(
-        @RequestBody @Valid MoleCreateRequest request,
-        // @RequestPart("request") @Valid MoleCreateRequest request,
-        // @RequestPart("eeg_data_file") MultipartFile eegDataFile,
-        // @RequestPart("eye_data_file") MultipartFile eyeDataFile,
+        // @RequestBody @Valid MoleCreateRequest request,
+        @RequestPart("request") @Valid MoleCreateRequest request,
+        @RequestPart("eeg_data_file") MultipartFile eegDataFile,
+        @RequestPart("eye_data_file") MultipartFile eyeDataFile,
         @UserAuth Integer userId
     );
 

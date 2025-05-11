@@ -28,26 +28,27 @@ public class GameController implements GameApi{
 
     @PostMapping("/game/meteorite")
     public ResponseEntity<Void> crateMeteorite(
-        @RequestBody @Valid MeteoriteCreateRequest request,
-        // @RequestPart("request") @Valid MeteoriteCreateRequest request,
-        // @RequestPart("eeg_data_file") MultipartFile eegDataFile,
-        // @RequestPart("eye_data_file") MultipartFile eyeDataFile,
+        // @RequestBody @Valid MeteoriteCreateRequest request,
+        @RequestPart("request") @Valid MeteoriteCreateRequest request,
+        @RequestPart("eeg_data_file") MultipartFile eegDataFile,
+        @RequestPart("eye_data_file") MultipartFile eyeDataFile,
         @UserAuth Integer userId
     ) {
-        // gameService.crateMeteorite(request, eegDataFile, eyeDataFile, userId);
-        gameService.crateMeteorite(request, userId);
+        gameService.crateMeteorite(request, eegDataFile, eyeDataFile, userId);
+        // gameService.crateMeteorite(request, userId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/game/mole")
     public ResponseEntity<Void> createMole(
-        @RequestBody @Valid MoleCreateRequest request,
-        // @RequestPart("request") @Valid MoleCreateRequest request,
-        // @RequestPart("eeg_data_file") MultipartFile eegDataFile,
-        // @RequestPart("eye_data_file") MultipartFile eyeDataFile,
+        // @RequestBody @Valid MoleCreateRequest request,
+        @RequestPart("request") @Valid MoleCreateRequest request,
+        @RequestPart("eeg_data_file") MultipartFile eegDataFile,
+        @RequestPart("eye_data_file") MultipartFile eyeDataFile,
         @UserAuth Integer userId
     ) {
-        gameService.crateMole(request, userId);
+        gameService.crateMole(request, eegDataFile, eyeDataFile, userId);
+        // gameService.crateMole(request, userId);
         return ResponseEntity.ok().build();
     }
 
