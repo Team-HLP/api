@@ -196,6 +196,7 @@ public class GuardianService {
             .toList();
     }
 
+    // TODO. 캐싱 추가
     public ChildADHDStatisticsResponse getChildADHDStatistics(Integer gameId, Integer childrenId, Integer guardianId) {
         Guardian guardian = guardianRepository.getById(guardianId);
         User children = childrenRepository.getById(childrenId);
