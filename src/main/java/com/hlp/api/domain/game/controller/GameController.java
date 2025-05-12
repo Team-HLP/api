@@ -46,9 +46,10 @@ public class GameController implements GameApi{
         @RequestPart("request") @Valid MoleCreateRequest request,
         @RequestPart("eeg_data_file") MultipartFile eegDataFile,
         @RequestPart("eye_data_file") MultipartFile eyeDataFile,
+        @RequestPart("behavior_file") MultipartFile behaviorDataFile,
         @UserAuth Integer userId
     ) {
-        gameService.crateMole(request, eegDataFile, eyeDataFile, userId);
+        gameService.crateMole(request, eegDataFile, eyeDataFile, behaviorDataFile, userId);
         // gameService.crateMole(request, userId);
         return ResponseEntity.ok().build();
     }

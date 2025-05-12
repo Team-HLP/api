@@ -57,7 +57,7 @@ public class GameService {
 
     @Transactional
     public void crateMole(
-        MoleCreateRequest request, MultipartFile eegDataFile, MultipartFile eyeDatafile, Integer userId
+        MoleCreateRequest request, MultipartFile eegDataFile, MultipartFile eyeDatafile, MultipartFile behaviorDataFile, Integer userId
         // MoleCreateRequest request, Integer userId
     ) {
         User user = userRepository.getById(userId);
@@ -67,6 +67,7 @@ public class GameService {
         String path = String.format(fileStorageProperties.path(), System.getProperty("user.dir"), user.getId(), game.getId());
         saveJsonFile(eegDataFile, path);
         saveJsonFile(eyeDatafile, path);
+        saveJsonFile(behaviorDataFile, path);
     }
 
     private void saveJsonFile(MultipartFile jsonFile, String path) {
