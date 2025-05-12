@@ -255,7 +255,7 @@ public class GuardianService {
             }
         }
 
-        throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
+        throw new IllegalArgumentException("Invalid behavior status or object");
     }
 
     private int calculateConcentrationScore(BehaviorData data, PupilRecord pupil, BasePupilSize base) {
@@ -271,7 +271,7 @@ public class GuardianService {
             }
         }
 
-        throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
+        throw new IllegalArgumentException("Invalid behavior status or object");
     }
 
     private boolean isPupilDilated(PupilRecord record, BasePupilSize base) {
