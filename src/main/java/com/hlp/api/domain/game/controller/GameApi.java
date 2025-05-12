@@ -41,6 +41,7 @@ public interface GameApi {
         @RequestPart("request") @Valid MeteoriteCreateRequest request,
         @RequestPart("eeg_data_file") MultipartFile eegDataFile,
         @RequestPart("eye_data_file") MultipartFile eyeDataFile,
+        @RequestPart("behavior_file") MultipartFile behaviorDataFile,
         @UserAuth Integer userId
     );
 
