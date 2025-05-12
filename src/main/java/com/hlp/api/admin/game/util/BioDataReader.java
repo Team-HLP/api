@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hlp.api.admin.game.model.BehaviorData;
 import com.hlp.api.admin.game.model.BioData;
 import com.hlp.api.admin.game.model.EegData;
 import com.hlp.api.admin.game.model.EyeData;
@@ -52,5 +53,25 @@ public class BioDataReader {
         }
 
         return new BioData(eyeData, eegData);
+    }
+
+    public List<BehaviorData> readBehaviorData(Integer gameId, Integer userId) {
+        String path = String.format(fileStorageProperties.path(), System.getProperty("user.dir"), userId, gameId);
+
+        File behaviorDataFilePath = new File(path, "behavior_data.json");
+
+        List<BehaviorData> behaviorData;
+
+        try {
+            behaviorData = objectMapper.readValue(
+                behaviorDataFilePath,
+                new TypeReference<>() {
+                }
+            );
+        } catch (IOException e) {
+            throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
+        }
+
+        return behaviorData;
     }
 }

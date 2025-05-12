@@ -11,15 +11,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonNaming(value = SnakeCaseStrategy.class)
 public record ChildADHDStatisticsResponse(
     @Schema(description = "충동 억제 점수", example = "48", requiredMode = REQUIRED)
-    Integer impulseInhibitionScore,
+    Double impulseInhibitionScore,
 
     @Schema(description = "집중력 점수", example = "45", requiredMode = REQUIRED)
-    Integer concentrationScore,
+    Double concentrationScore,
 
     @Schema(description = "ADHD 상태", example = "양호", requiredMode = REQUIRED)
     String ADHDStatus
 ) {
-    public static ChildADHDStatisticsResponse from(Integer impulseInhibitionScore, Integer concentrationScore, ADHDStatus ADHDStatus) {
+    public static ChildADHDStatisticsResponse from(Double impulseInhibitionScore, Double concentrationScore, ADHDStatus ADHDStatus) {
         return new ChildADHDStatisticsResponse(
             impulseInhibitionScore,
             concentrationScore,

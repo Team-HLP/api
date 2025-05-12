@@ -8,5 +8,7 @@ public record EegData(
     Double beta,
     Double gamma
 ) {
-
+    public Double getTBR() {
+        return theta / beta;
+    }
 }

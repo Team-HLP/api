@@ -21,6 +21,7 @@ import com.hlp.api.admin.game.model.BioData;
 import com.hlp.api.admin.game.model.EegData;
 import com.hlp.api.admin.game.model.EyeData;
 import com.hlp.api.admin.game.model.TBRConversionProperties;
+import com.hlp.api.admin.game.model.TBRStandard;
 import com.hlp.api.admin.game.repository.AdminGameRepository;
 import com.hlp.api.admin.game.util.BioDataReader;
 import com.hlp.api.common.config.FileStorageProperties;
@@ -38,7 +39,6 @@ import lombok.RequiredArgsConstructor;
 public class AdminGameService {
 
     private final TBRConversionProperties tbrConversionProperties;
-    private final FileStorageProperties fileStorageProperties;
     private final AdminGameRepository adminGameRepository;
     private final UserRepository userRepository;
     private final BioDataReader bioDataReader;
@@ -111,15 +111,5 @@ public class AdminGameService {
         }
 
         return (double)((totalScore / tbrConversionProperties.totalScore()) * tbrConversionProperties.conversionScore());
-    }
-
-    private record TBRStandard(
-        Integer score,
-        Integer over,
-        Integer blew
-    ) {
-        public boolean isBetweenTBR(Double tbr) {
-            return over <= tbr && tbr <= blew;
-        }
     }
 }

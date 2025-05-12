@@ -1,20 +1,27 @@
 package com.hlp.api.domain.guardian.service;
 
+import static com.hlp.api.admin.game.model.EyeData.BasePupilSize;
+import static com.hlp.api.admin.game.model.EyeData.PupilRecord;
 import static com.hlp.api.common.auth.validation.PasswordValidator.checkPasswordMatches;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hlp.api.admin.game.model.BehaviorData;
 import com.hlp.api.admin.game.model.BioData;
+import com.hlp.api.admin.game.model.EegData;
+import com.hlp.api.admin.game.model.EyeData;
+import com.hlp.api.admin.game.model.TBRConversionProperties;
+import com.hlp.api.admin.game.model.TBRStandard;
 import com.hlp.api.admin.game.util.BioDataReader;
 import com.hlp.api.common.auth.JwtProvider;
 import com.hlp.api.common.util.SmsUtil;
+import com.hlp.api.domain.game.exception.DataFileSaveException;
 import com.hlp.api.domain.game.model.Game;
 import com.hlp.api.domain.game.repository.GameRepository;
 import com.hlp.api.domain.guardian.dto.request.ChildrenRegisterVerifyRequest;
@@ -42,6 +49,7 @@ import com.hlp.api.domain.user.exception.UserWithDrawException;
 import com.hlp.api.domain.user.model.User;
 import com.hlp.api.domain.user.repository.UserRepository;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -49,6 +57,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class GuardianService {
 
+    private final TBRConversionProperties tbrConversionProperties;
     private final GuardianCertificationCodeRepository guardianCertificationCodeRepository;
     private final GuardianChildrenMapRepository guardianChildrenMapRepository;
     private final UserRepository childrenRepository;
@@ -58,6 +67,20 @@ public class GuardianService {
     private final JwtProvider jwtProvider;
     private final SmsUtil smsUtil;
     private final GameRepository gameRepository;
+
+    private final List<TBRStandard> standards = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        TBRConversionProperties.Minus minus = tbrConversionProperties.minus();
+        standards.add(new TBRStandard(minus.score(), minus.standard().over(), minus.standard().blew()));
+
+        TBRConversionProperties.Plus plus = tbrConversionProperties.plus();
+        standards.add(new TBRStandard(plus.score(), plus.standard().over(), plus.standard().blew()));
+
+        TBRConversionProperties.Zero zero = tbrConversionProperties.zero();
+        standards.add(new TBRStandard(zero.score(), zero.standard().over(), zero.standard().blew()));
+    }
 
     @Transactional
     public GuardianLoginResponse login(GuardianLoginRequest request) {
@@ -179,10 +202,99 @@ public class GuardianService {
         Game game = gameRepository.getById(gameId);
         guardianChildrenMapRepository.getByGuardianIdAndChildrenId(guardian.getId(), children.getId());
 
-        BioData bioData = bioDataReader.readBioData(game.getId(), guardian.getId());
+        final int maxScore = 50; // TODO: Unity로부터 전달받도록 개선
+        int impulseControlScore = 0;
+        int concentrationScore = 0;
 
-        // TODO. 로직 구현하기
+        BioData bioData = bioDataReader.readBioData(game.getId(), children.getId());
+        List<EegData> eegData = bioData.eegData();
+        EyeData eyeData = bioData.eyeData();
+        BasePupilSize basePupilSize = eyeData.basePupilSize();
+        List<PupilRecord> pupilRecords = eyeData.pupilRecords();
+        List<BehaviorData> behaviorData = bioDataReader.readBehaviorData(game.getId(), children.getId());
 
-        return ChildADHDStatisticsResponse.from(45, 45, ADHDStatus.CAUTION);
+        for (int i = 0; i < behaviorData.size(); i++) {
+            BehaviorData behavior = behaviorData.get(i);
+            if (isGazeStatus(behavior.status())) continue;
+
+            try {
+                impulseControlScore += calculateImpulseScore(behavior, eegData.get(i));
+                concentrationScore += calculateConcentrationScore(behavior, pupilRecords.get(i), basePupilSize);
+            } catch (IllegalArgumentException e) {
+                throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
+            }
+        }
+
+        double weight = calculateBlinkWeight(eyeData.blinkEyeCount());
+        double convertedImpulse = convertScore(impulseControlScore, weight, maxScore);
+        double convertedConcentration = convertScore(concentrationScore, weight, maxScore);
+        double totalScore = convertedImpulse + convertedConcentration;
+
+        ADHDStatus result = evaluateStatus(totalScore);
+
+        return ChildADHDStatisticsResponse.from(convertedImpulse, convertedConcentration, result);
+    }
+
+    private boolean isGazeStatus(String status) {
+        return "GAZE".equals(status) || "NOT_GAZE".equals(status);
+    }
+
+    private int calculateImpulseScore(BehaviorData data, EegData eeg) {
+        String status = data.status();
+        String object = data.ObjectName();
+
+        if ("USER_DESTROY".equals(status)) {
+            if ("Meteorite".equals(object)) {
+                return eeg.getTBR() < 4.0 ? 1 : -1;
+            } else if ("Fuel".equals(object)) {
+                return -1;
+            }
+        } else if ("GAZE_DESTROY".equals(status)) {
+            if ("Meteorite".equals(object)) {
+                return -1;
+            }
+        }
+
+        throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
+    }
+
+    private int calculateConcentrationScore(BehaviorData data, PupilRecord pupil, BasePupilSize base) {
+        String status = data.status();
+        String object = data.ObjectName();
+        boolean isConcentrated = isPupilDilated(pupil, base);
+
+        if ("USER_DESTROY".equals(status) || "GAZE_DESTROY".equals(status)) {
+            if ("Meteorite".equals(object)) {
+                return "USER_DESTROY".equals(status) ? (isConcentrated ? 1 : -1) : 0;
+            } else if ("Fuel".equals(object)) {
+                return isConcentrated ? 1 : -1;
+            }
+        }
+
+        throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
+    }
+
+    private boolean isPupilDilated(PupilRecord record, BasePupilSize base) {
+        double leftThreshold = base.left() * 0.9;
+        double rightThreshold = base.right() * 0.9;
+        return record.pupilSize().left() >= leftThreshold && record.pupilSize().right() >= rightThreshold;
+    }
+
+    private double calculateBlinkWeight(int count) {
+        if (count <= 13) return 1.0;
+        if (count <= 17) return 0.8;
+        if (count <= 20) return 0.6;
+        if (count <= 24) return 0.4;
+        return 0.2;
+    }
+
+    private double convertScore(int rawScore, double weight, int maxScore) {
+        return (rawScore * weight) / maxScore * 27.0;
+    }
+
+    private ADHDStatus evaluateStatus(double score) {
+        if (score <= 17.0) return ADHDStatus.DANGER;
+        if (score <= 35.0) return ADHDStatus.CAUTION;
+        return ADHDStatus.NORMAL;
     }
 }
