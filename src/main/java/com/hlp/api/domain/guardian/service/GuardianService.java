@@ -23,7 +23,10 @@ import com.hlp.api.common.auth.JwtProvider;
 import com.hlp.api.common.util.SmsUtil;
 import com.hlp.api.domain.game.exception.DataFileSaveException;
 import com.hlp.api.domain.game.model.Game;
+import com.hlp.api.domain.game.model.GameCategory;
+import com.hlp.api.domain.game.model.MeteoriteDestruction;
 import com.hlp.api.domain.game.repository.GameRepository;
+import com.hlp.api.domain.game.repository.MeteoriteDestructionRepository;
 import com.hlp.api.domain.guardian.dto.request.ChildrenRegisterVerifyRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianChildrenRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
@@ -60,6 +63,7 @@ public class GuardianService {
     private final TBRConversionProperties tbrConversionProperties;
     private final GuardianCertificationCodeRepository guardianCertificationCodeRepository;
     private final GuardianChildrenMapRepository guardianChildrenMapRepository;
+    private final MeteoriteDestructionRepository meteoriteDestructionRepository;
     private final UserRepository childrenRepository;
     private final GuardianRepository guardianRepository;
     private final PasswordEncoder passwordEncoder;
@@ -203,7 +207,15 @@ public class GuardianService {
         Game game = gameRepository.getById(gameId);
         guardianChildrenMapRepository.getByGuardianIdAndChildrenId(guardian.getId(), children.getId());
 
-        final int maxScore = 50; // TODO: Unity로부터 전달받도록 개선
+        final int maxScore;
+        if (game.getGameCategory() == GameCategory.METEORITE_DESTRUCTION) {
+            MeteoriteDestruction meteoriteDestruction = meteoriteDestructionRepository.findByGameId(game.getId());
+            Integer fuelCount = meteoriteDestruction.getFuelCount();
+            Integer meteoriteCount = meteoriteDestruction.getMeteoriteCount();
+            maxScore = 2 * meteoriteCount + fuelCount;
+        }
+        else maxScore = 50;
+
         int impulseControlScore = 0;
         int concentrationScore = 0;
 
