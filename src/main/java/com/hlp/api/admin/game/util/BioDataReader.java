@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hlp.api.admin.game.model.BehaviorData;
+import com.hlp.api.admin.game.model.BehaviorDataWrapper;
 import com.hlp.api.admin.game.model.BioData;
+import com.hlp.api.admin.game.model.EEGDataWrapper;
 import com.hlp.api.admin.game.model.EegData;
 import com.hlp.api.admin.game.model.EyeData;
 import com.hlp.api.common.config.FileStorageProperties;
@@ -39,20 +41,16 @@ public class BioDataReader {
         File eegDataFilePath = new File(path, "eeg_data.json");
 
         EyeData eyeData;
-        List<EegData> eegData;
+        EEGDataWrapper eegDataWrapper;
 
         try {
             eyeData = objectMapper.readValue(eyeDataFilePath, EyeData.class);
-            eegData = objectMapper.readValue(
-                eegDataFilePath,
-                new TypeReference<>() {
-                }
-            );
+            eegDataWrapper = objectMapper.readValue(eegDataFilePath, EEGDataWrapper.class);
         } catch (IOException e) {
             throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
         }
 
-        return new BioData(eyeData, eegData);
+        return new BioData(eyeData, eegDataWrapper.eegData());
     }
 
     public List<BehaviorData> readBehaviorData(Integer gameId, Integer userId) {
@@ -60,18 +58,14 @@ public class BioDataReader {
 
         File behaviorDataFilePath = new File(path, "behavior_data.json");
 
-        List<BehaviorData> behaviorData;
+        BehaviorDataWrapper behaviorData;
 
         try {
-            behaviorData = objectMapper.readValue(
-                behaviorDataFilePath,
-                new TypeReference<>() {
-                }
-            );
+            behaviorData = objectMapper.readValue(behaviorDataFilePath, BehaviorDataWrapper.class);
         } catch (IOException e) {
             throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
         }
 
-        return behaviorData;
+        return behaviorData.behaviorData();
     }
 }

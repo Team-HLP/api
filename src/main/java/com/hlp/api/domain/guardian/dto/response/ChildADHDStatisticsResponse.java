@@ -17,7 +17,7 @@ public record ChildADHDStatisticsResponse(
     Double concentrationScore,
 
     @Schema(description = "ADHD 상태", example = "양호", requiredMode = REQUIRED)
-    String ADHDStatus
+    String adhdStatus
 ) {
     public static ChildADHDStatisticsResponse from(Double impulseInhibitionScore, Double concentrationScore, ADHDStatus ADHDStatus) {
         return new ChildADHDStatisticsResponse(

@@ -1,34 +1,29 @@
 package com.hlp.api.admin.game.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public record EyeData(
-    BasePupilSize basePupilSize,
-    List<PupilRecord> pupilRecords,
-    Integer blinkEyeCount
+    @JsonProperty("base_pupil_size") BasePupilSize basePupilSize,
+    @JsonProperty("pupil_records") List<PupilRecord> pupilRecords,
+    @JsonProperty("blink_eye_count") Integer blinkEyeCount
 ) {
     private static final Double TOLERANCE = 0.1;
 
     public record BasePupilSize(
-        Double left,
-        Double right
-    ) {
-
-    }
+        @JsonProperty("left") Double left,
+        @JsonProperty("right") Double right
+    ) {}
 
     public record PupilRecord(
-        Double timeStamp,
-        PupilSize pupilSize
-    ) {
-
-    }
+        @JsonProperty("time_stamp") Double timeStamp,
+        @JsonProperty("pupil_size") PupilSize pupilSize
+    ) {}
 
     public record PupilSize(
-        Double left,
-        Double right
-    ) {
-
-    }
+        @JsonProperty("left") Double left,
+        @JsonProperty("right") Double right
+    ) {}
 
     public Integer belowBaseLeftPupilCount() {
         int count = 0;
