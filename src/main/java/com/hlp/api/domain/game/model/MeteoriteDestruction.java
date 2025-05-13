@@ -39,18 +39,30 @@ public class MeteoriteDestruction {
     @Column(name = "meteorite_broken_count", nullable = false)
     private Integer meteoriteBrokenCount;
 
+    @NotNull
+    @Column(name = "meteorite_count", nullable = false)
+    private Integer meteoriteCount;
+
+    @NotNull
+    @Column(name = "fuel_count", nullable = false)
+    private Integer fuelCount;
+
     @Builder
     private MeteoriteDestruction(
         Integer id,
         Game game,
         Integer score,
         Integer hp,
-        Integer meteoriteBrokenCount
+        Integer meteoriteBrokenCount,
+        Integer meteoriteCount,
+        Integer fuelCount
     ) {
         this.id = id;
         this.game = game;
         this.score = score;
         this.hp = hp;
         this.meteoriteBrokenCount = meteoriteBrokenCount;
+        this.meteoriteCount = meteoriteCount;
+        this.fuelCount = fuelCount;
     }
 }

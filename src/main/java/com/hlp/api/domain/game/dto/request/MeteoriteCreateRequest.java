@@ -16,6 +16,12 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonNaming(value = SnakeCaseStrategy.class)
 public record MeteoriteCreateRequest(
+    @Schema(description = "출현 메테오 개수", example = "123", requiredMode = REQUIRED)
+    Integer meteoriteCount,
+
+    @Schema(description = "출현 연료 개수", example = "123", requiredMode = REQUIRED)
+    Integer fuelCount,
+
     @Schema(description = "결과", example = "SUCCESS", requiredMode = REQUIRED)
     @NotNull(message = "결과를 입력해주세요.")
     Result result,
@@ -45,6 +51,8 @@ public record MeteoriteCreateRequest(
         return MeteoriteDestruction.builder()
             .hp(hp)
             .score(score)
+            .meteoriteCount(meteoriteCount)
+            .fuelCount(fuelCount)
             .meteoriteBrokenCount(meteoriteBrokenCount)
             .game(game)
             .build();
