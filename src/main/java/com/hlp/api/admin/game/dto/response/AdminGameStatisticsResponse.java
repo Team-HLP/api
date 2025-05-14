@@ -42,6 +42,10 @@ public record AdminGameStatisticsResponse(
 
     }
 
+    private static double roundToTwoDecimals(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
     public static AdminGameStatisticsResponse of(
         Integer eyeBlinkCount,
         Double avgEyePupilLeftSize,
@@ -54,14 +58,14 @@ public record AdminGameStatisticsResponse(
         return new AdminGameStatisticsResponse(
             eyeBlinkCount,
             new AvgEyePupilSize(
-                avgEyePupilLeftSize,
-                avgEyePupilRightSize
+                roundToTwoDecimals(avgEyePupilLeftSize),
+                roundToTwoDecimals(avgEyePupilRightSize)
             ),
             new BelowAvgEyePupilSizeCount(
                 belowLeftAvgEyePupilSizeCount,
                 belowRightAvgEyePupilSizeCount
             ),
-            TBRConversionScore,
+            roundToTwoDecimals(TBRConversionScore),
             createdAt
         );
     }
