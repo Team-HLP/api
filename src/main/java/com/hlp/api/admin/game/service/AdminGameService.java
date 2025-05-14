@@ -98,8 +98,13 @@ public class AdminGameService {
 
     private Double calcTBRConversionScore(List<EegData> eegDatas) {
         Integer totalScore = 0;
+        int size = eegDatas.size();
 
         for (EegData eegData : eegDatas) {
+            if (eegData.theta() < 0.0001 || eegData.beta() < 0.0001) {
+                size--;
+                continue;
+            }
             Double tbr = eegData.theta() / eegData.beta();
 
             for (TBRStandard standard : standards) {
@@ -110,6 +115,6 @@ public class AdminGameService {
             }
         }
 
-        return (double)((totalScore / (eegDatas.size() * tbrConversionProperties.totalScore())) * tbrConversionProperties.conversionScore());
+        return (double)totalScore / (size * tbrConversionProperties.totalScore()) * tbrConversionProperties.conversionScore();
     }
 }
