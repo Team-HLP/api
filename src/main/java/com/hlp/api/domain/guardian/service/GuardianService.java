@@ -226,7 +226,14 @@ public class GuardianService {
         List<PupilRecord> pupilRecords = eyeData.pupilRecords();
         List<BehaviorData> behaviorData = bioDataReader.readBehaviorData(game.getId(), children.getId());
 
+        Integer eegDataSize = behaviorData.size();
+        Integer pupilRecordSize = pupilRecords.size();
+
         for (int i = 0; i < behaviorData.size(); i++) {
+            if (i >= eegDataSize || i >= pupilRecordSize) {
+                break;
+            }
+
             BehaviorData behavior = behaviorData.get(i);
             if (isGazeStatus(behavior.status())) continue;
 
@@ -239,6 +246,8 @@ public class GuardianService {
         }
 
         double weight = calculateBlinkWeight(eyeData.blinkEyeCount());
+        impulseControlScore = Math.max(impulseControlScore, 0);
+        concentrationScore = Math.max(concentrationScore, 0);
         double convertedImpulse = convertScore(impulseControlScore, weight, maxScore);
         double convertedConcentration = convertScore(concentrationScore, weight, maxScore);
         double totalScore = convertedImpulse + convertedConcentration;
@@ -262,10 +271,11 @@ public class GuardianService {
             } else if ("Fuel".equals(object)) {
                 return -1;
             }
-        } else if ("GAZE_DESTROY".equals(status)) {
+        } else if ("AUTO_DESTROY".equals(status)) {
             if ("Meteorite".equals(object)) {
                 return -1;
             }
+            else return 0;
         }
 
         throw new IllegalArgumentException("Invalid behavior status or object");
@@ -276,7 +286,7 @@ public class GuardianService {
         String object = data.ObjectName();
         boolean isConcentrated = isPupilDilated(pupil, base);
 
-        if ("USER_DESTROY".equals(status) || "GAZE_DESTROY".equals(status)) {
+        if ("USER_DESTROY".equals(status) || "AUTO_DESTROY".equals(status)) {
             if ("Meteorite".equals(object)) {
                 return "USER_DESTROY".equals(status) ? (isConcentrated ? 1 : -1) : 0;
             } else if ("Fuel".equals(object)) {
