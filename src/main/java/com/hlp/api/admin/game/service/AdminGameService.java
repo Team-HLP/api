@@ -110,6 +110,6 @@ public class AdminGameService {
             }
         }
 
-        return (double)((totalScore / tbrConversionProperties.totalScore()) * tbrConversionProperties.conversionScore());
+        return (double)((totalScore / (eegDatas.size() * tbrConversionProperties.totalScore())) * tbrConversionProperties.conversionScore());
     }
 }
