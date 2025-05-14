@@ -69,7 +69,7 @@ public class AdminGameService {
 
         BioData bioData = bioDataReader.readBioData(gameId, user.getId());
 
-        return AdminGameDetailResponse.of(bioData.eyeData(), bioData.eegData());
+        return AdminGameDetailResponse.of(bioData.eyeData(), bioData.eegData(), game.getCreatedAt());
     }
 
     public List<AdminGameStatisticsResponse> getGameStatistics(Integer userId) {
