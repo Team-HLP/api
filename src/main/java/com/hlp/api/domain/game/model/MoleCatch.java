@@ -39,18 +39,30 @@ public class MoleCatch {
     @Column(name = "mole_catch_count", nullable = false)
     private Integer moleCatchCount;
 
+    @NotNull
+    @Column(name = "meteorite_count", nullable = false)
+    private Integer meteoriteCount;
+
+    @NotNull
+    @Column(name = "fuel_count", nullable = false)
+    private Integer fuelCount;
+
     @Builder
     private MoleCatch(
         Integer id,
         Game game,
         Integer score,
         Integer hp,
-        Integer moleCatchCount
+        Integer moleCatchCount,
+        Integer meteoriteCount,
+        Integer fuelCount
     ) {
         this.id = id;
         this.game = game;
         this.score = score;
         this.hp = hp;
         this.moleCatchCount = moleCatchCount;
+        this.meteoriteCount = meteoriteCount;
+        this.fuelCount = fuelCount;
     }
 }
