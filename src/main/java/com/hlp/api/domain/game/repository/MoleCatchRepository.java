@@ -6,4 +6,6 @@ import com.hlp.api.domain.game.model.MoleCatch;
 
 public interface MoleCatchRepository extends Repository<MoleCatch, Integer> {
     void save(MoleCatch moleCatch);
+
+    MoleCatch findByGameId(Integer gameId);
 }

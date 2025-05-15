@@ -17,10 +17,12 @@ import com.hlp.api.common.config.FileStorageProperties;
 import com.hlp.api.domain.game.dto.request.MeteoriteCreateRequest;
 import com.hlp.api.domain.game.dto.request.MoleCreateRequest;
 import com.hlp.api.domain.game.dto.response.MeteoriteDestructionResponse;
+import com.hlp.api.domain.game.dto.response.MoleCatchResponse;
 import com.hlp.api.domain.game.exception.DataFileSaveException;
 import com.hlp.api.domain.game.model.Game;
 import com.hlp.api.domain.game.model.GameCategory;
 import com.hlp.api.domain.game.model.MeteoriteDestruction;
+import com.hlp.api.domain.game.model.MoleCatch;
 import com.hlp.api.domain.game.repository.GameRepository;
 import com.hlp.api.domain.game.repository.MeteoriteDestructionRepository;
 import com.hlp.api.domain.game.repository.MoleCatchRepository;
@@ -101,7 +103,12 @@ public class GameService {
                 .collect(Collectors.toList());
         }
         else {
-            return Collections.emptyList();
+            return games.stream()
+                .map(game -> {
+                    MoleCatch moleCatch = moleCatchRepository.findByGameId(game.getId());
+                    return MoleCatchResponse.of(game, moleCatch);
+                })
+                .collect(Collectors.toList());
         }
     }
 }
