@@ -35,7 +35,7 @@ public record MoleCreateRequest(
 
     @Schema(description = "잡은 두더지 수", example = "54", requiredMode = REQUIRED)
     @NotNull(message = "잡은 두더지 수를 입력해주세요.")
-    Integer moleCatchCount
+    Integer meteoriteBrokenCount
 ) {
     public Game toGame(User user) {
         return Game.builder()
@@ -50,7 +50,7 @@ public record MoleCreateRequest(
         return MoleCatch.builder()
             .hp(hp)
             .score(score)
-            .moleCatchCount(moleCatchCount)
+            .moleCatchCount(meteoriteBrokenCount)
             .game(game)
             .meteoriteCount(meteoriteCount)
             .fuelCount(fuelCount)
