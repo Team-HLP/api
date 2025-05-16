@@ -109,7 +109,7 @@ public class GuardianController implements GuardianApi {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/children/{childId}games")
+    @GetMapping("/children/{childId}/games")
     public ResponseEntity<List<ChildrenGameResponse>> getChildrenGames(
         @PathVariable Integer childId,
         @GuardianAuth Integer guardianId

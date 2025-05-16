@@ -176,7 +176,7 @@ public interface GuardianApi {
         }
     )
     @Operation(summary = "등록된 자녀의 게임 리스트 조회")
-    @GetMapping("/children/{childId}games")
+    @GetMapping("/children/{childId}/games")
     ResponseEntity<List<ChildrenGameResponse>> getChildrenGames(
         @PathVariable Integer childId,
         @GuardianAuth Integer guardianId
