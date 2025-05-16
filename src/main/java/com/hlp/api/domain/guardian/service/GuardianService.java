@@ -117,7 +117,7 @@ public class GuardianService {
         }
 
         String certificationCode = String.valueOf(random.nextInt(900000) + 100000);
-        // smsUtil.sendOne(phoneNum, certificationCode);
+        smsUtil.sendOne(phoneNum, certificationCode);
 
         guardianCertificationCodeRepository.save(GuardianCertificationCode.of(phoneNum, certificationCode));
     }
@@ -170,7 +170,7 @@ public class GuardianService {
         String phoneNumber = children.getPhoneNumber().replaceAll("-", "");
         Random random = new Random();
         String certificationCode = String.valueOf(random.nextInt(900000) + 100000);
-        // smsUtil.sendOne(phoneNum, certificationCode);
+        smsUtil.sendOne(phoneNumber, certificationCode);
 
         guardianCertificationCodeRepository.save(GuardianCertificationCode.of(phoneNumber, certificationCode));
     }
