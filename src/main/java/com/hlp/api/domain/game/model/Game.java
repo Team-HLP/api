@@ -5,6 +5,8 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
+import org.hibernate.annotations.Where;
+
 import com.hlp.api.common.model.BaseEntity;
 import com.hlp.api.domain.user.model.User;
 
@@ -24,6 +26,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Table(name = "games")
+@Where(clause = "is_deleted=0")
 @NoArgsConstructor(access = PROTECTED)
 public class Game extends BaseEntity {
 
