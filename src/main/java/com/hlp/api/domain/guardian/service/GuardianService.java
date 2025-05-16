@@ -213,7 +213,7 @@ public class GuardianService {
         List<ChildrenGameResponse> responses = new ArrayList<>();
 
         for (Game game : games) {
-            String adhdStatus = getChildADHDStatistics(guardianId, childrenId, guardianId).adhdStatus();
+            String adhdStatus = getChildADHDStatistics(game.getId(), childrenId, guardianId).adhdStatus();
             responses.add(ChildrenGameResponse.of(game.getId(), adhdStatus, game.getCreatedAt().toLocalDate()));
         }
 
