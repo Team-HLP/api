@@ -18,6 +18,7 @@ import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerifySmsVerificationRequest;
 import com.hlp.api.domain.guardian.dto.response.ChildADHDStatisticsResponse;
+import com.hlp.api.domain.guardian.dto.response.ChildrenGameResponse;
 import com.hlp.api.domain.guardian.dto.response.ChildrenResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
@@ -105,6 +106,15 @@ public class GuardianController implements GuardianApi {
         @GuardianAuth Integer guardianId
     ) {
         List<ChildrenResponse> response = guardianService.getChildren(guardianId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/children/{childId}games")
+    public ResponseEntity<List<ChildrenGameResponse>> getChildrenGames(
+        @PathVariable Integer childId,
+        @GuardianAuth Integer guardianId
+    ) {
+        List<ChildrenGameResponse> response = guardianService.getChildrenGames(guardianId, childId);
         return ResponseEntity.ok(response);
     }
 

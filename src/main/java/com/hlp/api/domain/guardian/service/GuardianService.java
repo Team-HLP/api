@@ -25,8 +25,10 @@ import com.hlp.api.domain.game.exception.DataFileSaveException;
 import com.hlp.api.domain.game.model.Game;
 import com.hlp.api.domain.game.model.GameCategory;
 import com.hlp.api.domain.game.model.MeteoriteDestruction;
+import com.hlp.api.domain.game.model.MoleCatch;
 import com.hlp.api.domain.game.repository.GameRepository;
 import com.hlp.api.domain.game.repository.MeteoriteDestructionRepository;
+import com.hlp.api.domain.game.repository.MoleCatchRepository;
 import com.hlp.api.domain.guardian.dto.request.ChildrenRegisterVerifyRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianChildrenRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianLoginRequest;
@@ -34,6 +36,7 @@ import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerifySmsVerificationRequest;
 import com.hlp.api.domain.guardian.dto.response.ChildADHDStatisticsResponse;
+import com.hlp.api.domain.guardian.dto.response.ChildrenGameResponse;
 import com.hlp.api.domain.guardian.dto.response.ChildrenResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
@@ -64,6 +67,7 @@ public class GuardianService {
     private final GuardianCertificationCodeRepository guardianCertificationCodeRepository;
     private final GuardianChildrenMapRepository guardianChildrenMapRepository;
     private final MeteoriteDestructionRepository meteoriteDestructionRepository;
+    private final MoleCatchRepository moleCatchRepository;
     private final UserRepository childrenRepository;
     private final GuardianRepository guardianRepository;
     private final PasswordEncoder passwordEncoder;
@@ -200,6 +204,22 @@ public class GuardianService {
             .toList();
     }
 
+    public List<ChildrenGameResponse> getChildrenGames(Integer guardianId, Integer childrenId) {
+        Guardian guardian = guardianRepository.getById(guardianId);
+        User children = childrenRepository.getById(childrenId);
+        guardianChildrenMapRepository.getByGuardianIdAndChildrenId(guardian.getId(), children.getId());
+        List<Game> games = gameRepository.findAllByUserId(children.getId());
+
+        List<ChildrenGameResponse> responses = new ArrayList<>();
+
+        for (Game game : games) {
+            String adhdStatus = getChildADHDStatistics(guardianId, childrenId, guardianId).adhdStatus();
+            responses.add(ChildrenGameResponse.of(game.getId(), adhdStatus, game.getCreatedAt().toLocalDate()));
+        }
+
+        return responses;
+    }
+
     // TODO. 캐싱 추가
     public ChildADHDStatisticsResponse getChildADHDStatistics(Integer gameId, Integer childrenId, Integer guardianId) {
         Guardian guardian = guardianRepository.getById(guardianId);
@@ -212,6 +232,12 @@ public class GuardianService {
             MeteoriteDestruction meteoriteDestruction = meteoriteDestructionRepository.findByGameId(game.getId());
             Integer fuelCount = meteoriteDestruction.getFuelCount();
             Integer meteoriteCount = meteoriteDestruction.getMeteoriteCount();
+            maxScore = 2 * meteoriteCount + fuelCount;
+        }
+        else if (game.getGameCategory() == GameCategory.CATCH_MOLE) {
+            MoleCatch moleCatch = moleCatchRepository.findByGameId(game.getId());
+            Integer fuelCount = moleCatch.getFuelCount();
+            Integer meteoriteCount = moleCatch.getMeteoriteCount();
             maxScore = 2 * meteoriteCount + fuelCount;
         }
         else maxScore = 50;

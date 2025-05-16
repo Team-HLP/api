@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hlp.api.common.auth.guardian.GuardianAuth;
 import com.hlp.api.domain.guardian.dto.request.ChildrenRegisterVerifyRequest;
@@ -18,6 +17,7 @@ import com.hlp.api.domain.guardian.dto.request.GuardianRegisterRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerificationRequest;
 import com.hlp.api.domain.guardian.dto.request.GuardianVerifySmsVerificationRequest;
 import com.hlp.api.domain.guardian.dto.response.ChildADHDStatisticsResponse;
+import com.hlp.api.domain.guardian.dto.response.ChildrenGameResponse;
 import com.hlp.api.domain.guardian.dto.response.ChildrenResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianLoginResponse;
 import com.hlp.api.domain.guardian.dto.response.GuardianResponse;
@@ -164,6 +164,21 @@ public interface GuardianApi {
     @Operation(summary = "등록된 자녀 리스트 조회")
     @GetMapping("/children")
     ResponseEntity<List<ChildrenResponse>> getChildren(
+        @GuardianAuth Integer guardianId
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "등록된 자녀의 게임 리스트 조회")
+    @GetMapping("/children/{childId}games")
+    ResponseEntity<List<ChildrenGameResponse>> getChildrenGames(
+        @PathVariable Integer childId,
         @GuardianAuth Integer guardianId
     );
 
