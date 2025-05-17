@@ -1,5 +1,6 @@
 package com.hlp.api.domain.game.service;
 
+import static com.hlp.api.domain.game.model.GameCategory.CATCH_MOLE;
 import static com.hlp.api.domain.game.model.GameCategory.METEORITE_DESTRUCTION;
 
 import java.io.File;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hlp.api.common.config.FileStorageProperties;
 import com.hlp.api.domain.game.dto.request.MeteoriteCreateRequest;
 import com.hlp.api.domain.game.dto.request.MoleCreateRequest;
+import com.hlp.api.domain.game.dto.response.GameExistResponse;
 import com.hlp.api.domain.game.dto.response.MeteoriteDestructionResponse;
 import com.hlp.api.domain.game.dto.response.MoleCatchResponse;
 import com.hlp.api.domain.game.exception.DataFileSaveException;
@@ -110,5 +112,10 @@ public class GameService {
                 })
                 .collect(Collectors.toList());
         }
+    }
+
+    public GameExistResponse getGamesExist(Integer userId, GameCategory gameCategory) {
+        User user = userRepository.getById(userId);
+        return GameExistResponse.of(gameRepository.existsByUserIdAndGameCategory(userId, gameCategory));
     }
 }

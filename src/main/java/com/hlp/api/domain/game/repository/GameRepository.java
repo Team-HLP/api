@@ -22,4 +22,6 @@ public interface GameRepository extends Repository<Game, Integer> {
         return findById(gameId)
             .orElseThrow(() -> new GameNotFoundException("존재하지 않는 게임 정보입니다."));
     }
+
+    boolean existsByUserIdAndGameCategory(Integer userId, GameCategory gameCategory);
 }

@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hlp.api.common.auth.user.UserAuth;
 import com.hlp.api.domain.game.dto.request.MeteoriteCreateRequest;
 import com.hlp.api.domain.game.dto.request.MoleCreateRequest;
+import com.hlp.api.domain.game.dto.response.GameExistResponse;
 import com.hlp.api.domain.game.model.GameCategory;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,6 +76,21 @@ public interface GameApi {
     @Operation(summary = "게임 리스트 조회")
     @GetMapping("/games")
     ResponseEntity<List<Object>> getGames(
+        @UserAuth Integer userId,
+        @RequestParam GameCategory gameCategory
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "게임 실행 여부 조회")
+    @GetMapping("/games/exist")
+    ResponseEntity<GameExistResponse> getGamesExist(
         @UserAuth Integer userId,
         @RequestParam GameCategory gameCategory
     );

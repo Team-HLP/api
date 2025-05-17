@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hlp.api.common.auth.user.UserAuth;
 import com.hlp.api.domain.game.dto.request.MeteoriteCreateRequest;
 import com.hlp.api.domain.game.dto.request.MoleCreateRequest;
+import com.hlp.api.domain.game.dto.response.GameExistResponse;
 import com.hlp.api.domain.game.model.GameCategory;
 import com.hlp.api.domain.game.service.GameService;
 
@@ -60,6 +61,15 @@ public class GameController implements GameApi{
         @RequestParam GameCategory gameCategory
     ) {
         List<Object> response = gameService.getGames(userId, gameCategory);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/games/exist")
+    public ResponseEntity<GameExistResponse> getGamesExist(
+        @UserAuth Integer userId,
+        @RequestParam GameCategory gameCategory
+    ) {
+        GameExistResponse response = gameService.getGamesExist(userId, gameCategory);
         return ResponseEntity.ok(response);
     }
 }
