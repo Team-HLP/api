@@ -15,6 +15,9 @@ public record ChildrenGameResponse(
     @Schema(description = "게임 Id", example = "1", requiredMode = REQUIRED)
     Integer gameId,
 
+    @Schema(description = "인덱스", example = "1", requiredMode = REQUIRED)
+    Integer index,
+
     @Schema(description = "ADHD 상태", example = "양호", requiredMode = REQUIRED)
     String adhdStatus,
 
@@ -22,7 +25,7 @@ public record ChildrenGameResponse(
     @JsonFormat(pattern = "yyyy.MM.dd")
     LocalDate createdAt
 ) {
-    public static ChildrenGameResponse of(Integer gameId, String adhdStatus, LocalDate createdAt) {
-        return new ChildrenGameResponse(gameId, adhdStatus, createdAt);
+    public static ChildrenGameResponse of(Integer gameId, Integer index, String adhdStatus, LocalDate createdAt) {
+        return new ChildrenGameResponse(gameId, index, adhdStatus, createdAt);
     }
 }

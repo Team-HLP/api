@@ -215,7 +215,7 @@ public class GuardianService {
         for (int index = 0; index < games.size(); index++) {
             Game game = games.get(index);
             String adhdStatus = getChildADHDStatistics(game.getId(), childrenId, guardianId).adhdStatus();
-            responses.add(ChildrenGameResponse.of(index + 1, adhdStatus, game.getCreatedAt().toLocalDate()));
+            responses.add(ChildrenGameResponse.of(game.getId(), index + 1, adhdStatus, game.getCreatedAt().toLocalDate()));
         }
 
         return responses;
