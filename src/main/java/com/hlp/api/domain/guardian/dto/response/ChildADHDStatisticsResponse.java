@@ -21,9 +21,13 @@ public record ChildADHDStatisticsResponse(
 ) {
     public static ChildADHDStatisticsResponse from(Double impulseInhibitionScore, Double concentrationScore, ADHDStatus ADHDStatus) {
         return new ChildADHDStatisticsResponse(
-            impulseInhibitionScore,
-            concentrationScore,
+            roundToTwoDecimals(impulseInhibitionScore),
+            roundToTwoDecimals(concentrationScore),
             ADHDStatus.getDescription()
         );
+    }
+
+    private static double roundToTwoDecimals(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 }
