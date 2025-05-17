@@ -232,13 +232,13 @@ public class GuardianService {
             MeteoriteDestruction meteoriteDestruction = meteoriteDestructionRepository.findByGameId(game.getId());
             Integer fuelCount = meteoriteDestruction.getFuelCount();
             Integer meteoriteCount = meteoriteDestruction.getMeteoriteCount();
-            maxScore = 2 * meteoriteCount + fuelCount;
+            maxScore = 3 * (meteoriteCount + fuelCount);
         }
         else if (game.getGameCategory() == GameCategory.CATCH_MOLE) {
             MoleCatch moleCatch = moleCatchRepository.findByGameId(game.getId());
             Integer fuelCount = moleCatch.getFuelCount();
             Integer meteoriteCount = moleCatch.getMeteoriteCount();
-            maxScore = 2 * meteoriteCount + fuelCount;
+            maxScore = 3 * (meteoriteCount + fuelCount);
         }
         else maxScore = 50;
 
@@ -246,26 +246,29 @@ public class GuardianService {
         int concentrationScore = 0;
 
         BioData bioData = bioDataReader.readBioData(game.getId(), children.getId());
+
         List<EegData> eegData = bioData.eegData();
+
         EyeData eyeData = bioData.eyeData();
         BasePupilSize basePupilSize = eyeData.basePupilSize();
         List<PupilRecord> pupilRecords = eyeData.pupilRecords();
+
         List<BehaviorData> behaviorData = bioDataReader.readBehaviorData(game.getId(), children.getId());
 
         Integer eegDataSize = behaviorData.size();
         Integer pupilRecordSize = pupilRecords.size();
 
-        for (int i = 0; i < behaviorData.size(); i++) {
-            if (i >= eegDataSize || i >= pupilRecordSize) {
+        for (int index = 0; index < behaviorData.size(); index++) {
+            if (index >= eegDataSize || index >= pupilRecordSize) {
                 break;
             }
 
-            BehaviorData behavior = behaviorData.get(i);
+            BehaviorData behavior = behaviorData.get(index);
             if (isGazeStatus(behavior.status())) continue;
 
             try {
-                impulseControlScore += calculateImpulseScore(behavior, eegData.get(i));
-                concentrationScore += calculateConcentrationScore(behavior, pupilRecords.get(i), basePupilSize);
+                impulseControlScore += calculateImpulseScore(behavior, eegData.get(index));
+                concentrationScore += calculateConcentrationScore(behavior, pupilRecords.get(index), basePupilSize);
             } catch (IllegalArgumentException e) {
                 throw new DataFileSaveException("생체 데이터 읽기 과정에서 오류가 발생했습니다");
             }
@@ -287,36 +290,88 @@ public class GuardianService {
         return "GAZE".equals(status) || "NOT_GAZE".equals(status);
     }
 
+    /**
+     * 집중력 점수 계산
+     * - 운석
+     *     - 유저 파괴 o
+     *         - TBR에 상관없이 +3
+     *     - 파괴 x
+     *         - TBR < 4 : 0
+     *         - 4 ≤ TBR ≤ 6 : -1
+     *         - TBR > 6 : -2
+     * - 연료
+     *     - 파괴 o
+     *         - TBR에 상관없이 -1
+     *     - 파괴 x
+     *         - TBR < 4 : +3
+     *         - 4 ≤ TBR ≤ 6 : +2
+     *         - TBR > 6 : +1
+     */
     private int calculateImpulseScore(BehaviorData data, EegData eeg) {
         String status = data.status();
         String object = data.ObjectName();
+        Integer tbr = eeg.getTBR();
 
         if ("USER_DESTROY".equals(status)) {
             if ("Meteorite".equals(object)) {
-                return eeg.getTBR() < 4.0 ? 1 : -1;
-            } else if ("Fuel".equals(object)) {
+                return 3;
+            }
+            if ("Fuel".equals(object)) {
                 return -1;
             }
         } else if ("AUTO_DESTROY".equals(status)) {
             if ("Meteorite".equals(object)) {
-                return -1;
+                if (tbr < 4) return 0;
+                else if (tbr <= 6) return -1;
+                else return -2;
             }
-            else return 0;
+            if ("Fuel".equals(object)) {
+                if (tbr < 4) return 3;
+                else if (tbr <= 6) return 2;
+                else return 1;
+            }
         }
 
         throw new IllegalArgumentException("Invalid behavior status or object");
     }
 
+    /**
+     * 집중력 점수 계산
+     * - 운석
+     *     - 파괴 o
+     *         - 동공 크기 상관 없이 +3
+     *     - 파괴 x
+     *         - 동공 크기가 크면 -1
+     *         - 동공 크기가 낮으면 -2
+     * - 연료
+     *     - 파괴 o
+     *         - 동공 크기가 크면 +1
+     *         - 동공 크기가 낮으면 -2
+     *     - 파괴 x
+     *         - 동공 크기가 크면 +3
+     *         - 동공 크기가 낮으면 +1
+     */
     private int calculateConcentrationScore(BehaviorData data, PupilRecord pupil, BasePupilSize base) {
         String status = data.status();
         String object = data.ObjectName();
         boolean isConcentrated = isPupilDilated(pupil, base);
 
-        if ("USER_DESTROY".equals(status) || "AUTO_DESTROY".equals(status)) {
+        if ("USER_DESTROY".equals(status)) {
             if ("Meteorite".equals(object)) {
-                return "USER_DESTROY".equals(status) ? (isConcentrated ? 1 : -1) : 0;
-            } else if ("Fuel".equals(object)) {
-                return isConcentrated ? 1 : -1;
+                return 3;
+            }
+            if ("Fuel".equals(object)) {
+                if (isConcentrated) return 1;
+                else return -2;
+            }
+        } else if ("AUTO_DESTROY".equals(status)) {
+            if ("Meteorite".equals(object)) {
+                if (isConcentrated) return -1;
+                else return -2;
+            }
+            if ("Fuel".equals(object)) {
+                if (isConcentrated) return 3;
+                else return 1;
             }
         }
 
