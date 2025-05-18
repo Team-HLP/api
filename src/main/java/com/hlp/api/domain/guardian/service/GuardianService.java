@@ -223,6 +223,7 @@ public class GuardianService {
 
     // TODO. 캐싱 추가
     public ChildADHDStatisticsResponse getChildADHDStatistics(Integer gameId, Integer childrenId, Integer guardianId) {
+        gameId = 115;
         Guardian guardian = guardianRepository.getById(guardianId);
         User children = childrenRepository.getById(childrenId);
         Game game = gameRepository.getById(gameId);
@@ -262,6 +263,9 @@ public class GuardianService {
         for (int index = 0; index < behaviorData.size(); index++) {
             if (index >= eegDataSize || index >= pupilRecordSize) {
                 break;
+            }
+            if (!eegData.get(index).isValid()) {
+                continue;
             }
 
             BehaviorData behavior = behaviorData.get(index);

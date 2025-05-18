@@ -8,13 +8,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hlp.api.admin.game.model.BehaviorData;
 import com.hlp.api.admin.game.model.BehaviorDataWrapper;
 import com.hlp.api.admin.game.model.BioData;
 import com.hlp.api.admin.game.model.EEGDataWrapper;
-import com.hlp.api.admin.game.model.EegData;
 import com.hlp.api.admin.game.model.EyeData;
 import com.hlp.api.common.config.FileStorageProperties;
 import com.hlp.api.domain.game.exception.DataFileSaveException;
@@ -32,6 +31,7 @@ public class BioDataReader {
     @PostConstruct
     public void init() {
         objectMapper.setPropertyNamingStrategy(SNAKE_CASE);
+        objectMapper.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature());
     }
 
     public BioData readBioData(Integer gameId, Integer userId) {

@@ -9,6 +9,11 @@ public record EegData(
     Double gamma
 ) {
     public Integer getTBR() {
+        if (!isValid()) return null;
         return (int)(theta / beta);
+    }
+
+    public Boolean isValid() {
+        return theta != null && beta != null && !theta.isNaN() && !beta.isNaN() && beta != 0.0;
     }
 }
