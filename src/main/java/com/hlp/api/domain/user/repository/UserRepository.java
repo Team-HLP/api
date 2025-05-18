@@ -14,7 +14,7 @@ public interface UserRepository extends Repository<User, Long> {
 
     default User getByLoginId(String loginId) {
         return findByLoginId(loginId)
-            .orElseThrow(() -> new UserNotFoundException("등록되지 않은 아이디입니다"));
+            .orElseThrow(() -> new UserNotFoundException("등록되지 않은 아이디입니다."));
     }
 
     void save(User user);

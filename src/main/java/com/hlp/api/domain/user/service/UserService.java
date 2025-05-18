@@ -28,7 +28,7 @@ public class UserService {
     public UserLoginResponse login(UserLoginRequest request) {
         User user = userRepository.getByLoginId(request.loginId());
         if (user.getIsDeleted()) {
-            throw new UserWithDrawException("탈퇴한 유저입니다.");
+            throw new UserWithDrawException("등록되지 않은 아이디입니다.");
         }
         checkPasswordMatches(passwordEncoder, request.password(), user.getPassword());
         String accessToken = jwtProvider.createToken(user);

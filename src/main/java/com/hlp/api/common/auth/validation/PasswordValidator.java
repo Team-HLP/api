@@ -10,7 +10,7 @@ public final class PasswordValidator {
 
     public static void checkPasswordMatches(PasswordEncoder encoder, String rawPassword, String encodedPassword) {
         if (!encoder.matches(rawPassword, encodedPassword)) {
-            throw new NotMatchPasswordException("비밀번호가 일치하지 않습니다");
+            throw new NotMatchPasswordException("비밀번호가 일치하지 않습니다.");
         }
     }
 }
