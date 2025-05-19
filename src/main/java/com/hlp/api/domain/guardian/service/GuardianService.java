@@ -282,7 +282,7 @@ public class GuardianService {
         double weight = calculateBlinkWeight(eyeData.blinkEyeCount());
         impulseControlScore = Math.max(impulseControlScore, 0);
         concentrationScore = Math.max(concentrationScore, 0);
-        double convertedImpulse = convertScore(impulseControlScore, weight, maxScore);
+        double convertedImpulse = convertScore(impulseControlScore, maxScore);
         double convertedConcentration = convertScore(concentrationScore, weight, maxScore);
         double totalScore = convertedImpulse + convertedConcentration;
 
@@ -399,6 +399,10 @@ public class GuardianService {
 
     private double convertScore(int rawScore, double weight, int maxScore) {
         return (rawScore * weight) / maxScore * 27.0;
+    }
+
+    private double convertScore(int rawScore, int maxScore) {
+        return (rawScore * 27.0) / maxScore;
     }
 
     private ADHDStatus evaluateStatus(double score) {
