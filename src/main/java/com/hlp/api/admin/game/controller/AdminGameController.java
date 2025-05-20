@@ -13,6 +13,7 @@ import com.hlp.api.admin.game.dto.response.AdminGameResponse;
 import com.hlp.api.admin.game.dto.response.AdminGameStatisticsResponse;
 import com.hlp.api.admin.game.service.AdminGameService;
 import com.hlp.api.common.auth.admin.AdminAuth;
+import com.hlp.api.domain.guardian.dto.response.ChildADHDStatisticsResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,6 +48,15 @@ public class AdminGameController implements AdminGameApi {
         @AdminAuth Integer adminId
     ) {
         List<AdminGameStatisticsResponse> response = adminGameService.getGameStatistics(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/admin/game/statistics/bio")
+    public ResponseEntity<List<ChildADHDStatisticsResponse>> getGameStatisticsByBio(
+        @RequestParam(name = "user_id") Integer userId,
+        @AdminAuth Integer adminId
+    ) {
+        List<ChildADHDStatisticsResponse> response = adminGameService.getChildrenGames(userId);
         return ResponseEntity.ok(response);
     }
 }

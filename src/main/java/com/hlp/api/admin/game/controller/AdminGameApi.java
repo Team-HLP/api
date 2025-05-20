@@ -11,6 +11,7 @@ import com.hlp.api.admin.game.dto.response.AdminGameDetailResponse;
 import com.hlp.api.admin.game.dto.response.AdminGameResponse;
 import com.hlp.api.admin.game.dto.response.AdminGameStatisticsResponse;
 import com.hlp.api.common.auth.admin.AdminAuth;
+import com.hlp.api.domain.guardian.dto.response.ChildADHDStatisticsResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -64,6 +65,21 @@ public interface AdminGameApi {
     @Operation(summary = "게임 통계 조회")
     @GetMapping("/admin/game/statistics")
     ResponseEntity<List<AdminGameStatisticsResponse>> getGameStatistics(
+        @RequestParam(name = "user_id") Integer userId,
+        @AdminAuth Integer adminId
+    );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "충동성 및 집중력통계 조회")
+    @GetMapping("/admin/game/statistics/bio")
+    ResponseEntity<List<ChildADHDStatisticsResponse>> getGameStatisticsByBio(
         @RequestParam(name = "user_id") Integer userId,
         @AdminAuth Integer adminId
     );
