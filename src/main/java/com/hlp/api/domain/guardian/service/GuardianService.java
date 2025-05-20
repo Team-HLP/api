@@ -223,7 +223,6 @@ public class GuardianService {
 
     // TODO. 캐싱 추가
     public ChildADHDStatisticsResponse getChildADHDStatistics(Integer gameId, Integer childrenId, Integer guardianId) {
-        gameId = 115;
         Guardian guardian = guardianRepository.getById(guardianId);
         User children = childrenRepository.getById(childrenId);
         Game game = gameRepository.getById(gameId);
@@ -283,7 +282,7 @@ public class GuardianService {
         impulseControlScore = Math.max(impulseControlScore, 0);
         concentrationScore = Math.max(concentrationScore, 0);
         double convertedImpulse = convertScore(impulseControlScore, maxScore);
-        double convertedConcentration = convertScore(concentrationScore, weight, maxScore);
+        double convertedConcentration = convertScore(concentrationScore, maxScore);
         double totalScore = convertedImpulse + convertedConcentration;
 
         ADHDStatus result = evaluateStatus(totalScore);
