@@ -203,7 +203,7 @@ public class AdminGameService {
         impulseControlScore = Math.max(impulseControlScore, 0);
         concentrationScore = Math.max(concentrationScore, 0);
         double convertedImpulse = convertScore(impulseControlScore, maxScore);
-        double convertedConcentration = convertScore(concentrationScore, maxScore);
+        double convertedConcentration = convertScore(concentrationScore, weight, maxScore);
         double totalScore = convertedImpulse + convertedConcentration;
 
         ADHDStatus result = evaluateStatus(totalScore);
@@ -310,11 +310,11 @@ public class AdminGameService {
     }
 
     private double calculateBlinkWeight(int count) {
-        if (count <= 13) return 1.0;
-        if (count <= 17) return 0.8;
-        if (count <= 20) return 0.6;
-        if (count <= 24) return 0.4;
-        return 0.2;
+        if (count <= 15) return 1.0;
+        if (count <= 19) return 0.9;
+        if (count <= 21) return 0.8;
+        if (count <= 26) return 0.7;
+        return 0.6;
     }
 
     private double convertScore(int rawScore, double weight, int maxScore) {
