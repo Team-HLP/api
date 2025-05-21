@@ -1,10 +1,7 @@
 package com.hlp.api.admin.game.service;
 
-import static com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE;
 import static com.hlp.api.domain.game.model.Result.SUCCESS;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,8 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hlp.api.admin.game.dto.response.AdminGameDetailResponse;
 import com.hlp.api.admin.game.dto.response.AdminGameResponse;
 import com.hlp.api.admin.game.dto.response.AdminGameStatisticsResponse;
@@ -25,7 +20,6 @@ import com.hlp.api.admin.game.model.TBRConversionProperties;
 import com.hlp.api.admin.game.model.TBRStandard;
 import com.hlp.api.admin.game.repository.AdminGameRepository;
 import com.hlp.api.admin.game.util.BioDataReader;
-import com.hlp.api.common.config.FileStorageProperties;
 import com.hlp.api.domain.game.exception.DataFileSaveException;
 import com.hlp.api.domain.game.model.Game;
 import com.hlp.api.domain.game.model.GameCategory;
@@ -35,9 +29,7 @@ import com.hlp.api.domain.game.repository.GameRepository;
 import com.hlp.api.domain.game.repository.MeteoriteDestructionRepository;
 import com.hlp.api.domain.game.repository.MoleCatchRepository;
 import com.hlp.api.domain.guardian.dto.response.ChildADHDStatisticsResponse;
-import com.hlp.api.domain.guardian.dto.response.ChildrenGameResponse;
 import com.hlp.api.domain.guardian.model.ADHDStatus;
-import com.hlp.api.domain.guardian.model.Guardian;
 import com.hlp.api.domain.user.model.User;
 import com.hlp.api.domain.user.repository.UserRepository;
 
@@ -83,14 +75,17 @@ public class AdminGameService {
     public AdminGameDetailResponse getGame(Integer userId, Integer gameId) {
         User user = userRepository.getById(userId);
         Game game = adminGameRepository.getByIdAndUserId(gameId, user.getId());
-        AdminGameDetailResponse response = adminGameDetailRedisService.get(String.valueOf(game.getId()));
-        if (response != null) {
-            return response;
+        AdminGameDetailResponse redisResponse = adminGameDetailRedisService.get(String.valueOf(game.getId()));
+        if (redisResponse != null) {
+            return redisResponse;
         }
 
         BioData bioData = bioDataReader.readBioData(gameId, user.getId());
+        AdminGameDetailResponse response = AdminGameDetailResponse.of(bioData.eyeData(),
+            bioData.eegData(), game.getCreatedAt());
+        adminGameDetailRedisService.save(String.valueOf(game.getId()), response);
 
-        return AdminGameDetailResponse.of(bioData.eyeData(), bioData.eegData(), game.getCreatedAt());
+        return response;
     }
 
     public List<AdminGameStatisticsResponse> getGameStatistics(Integer userId) {
@@ -102,16 +97,24 @@ public class AdminGameService {
         List<AdminGameStatisticsResponse> responses = new ArrayList<>();
 
         for (Game game : games) {
-            BioData bioData = bioDataReader.readBioData(game.getId(), user.getId());
-            responses.add(AdminGameStatisticsResponse.of(
-                bioData.eyeData().blinkEyeCount(),
-                bioData.eyeData().basePupilSize().left(),
-                bioData.eyeData().basePupilSize().right(),
-                bioData.eyeData().belowBaseLeftPupilCount(),
-                bioData.eyeData().belowBaseRightPupilCount(),
-                calcTBRConversionScore(bioData.eegData()),
-                game.getCreatedAt()
-            ));
+            AdminGameStatisticsResponse redisResponse = gameStatisticsRedisService.get(String.valueOf(game.getId()));
+            if (redisResponse != null) {
+                responses.add(redisResponse);
+            }
+            else {
+                BioData bioData = bioDataReader.readBioData(game.getId(), user.getId());
+                AdminGameStatisticsResponse response = AdminGameStatisticsResponse.of(
+                    bioData.eyeData().blinkEyeCount(),
+                    bioData.eyeData().basePupilSize().left(),
+                    bioData.eyeData().basePupilSize().right(),
+                    bioData.eyeData().belowBaseLeftPupilCount(),
+                    bioData.eyeData().belowBaseRightPupilCount(),
+                    calcTBRConversionScore(bioData.eegData()),
+                    game.getCreatedAt()
+                );
+                gameStatisticsRedisService.save(String.valueOf(game.getId()), response);
+                responses.add(response);
+            }
         }
 
         return responses;
@@ -146,14 +149,15 @@ public class AdminGameService {
         List<ChildADHDStatisticsResponse> responses = new ArrayList<>();
 
         for (Game game : games) {
-            ChildADHDStatisticsResponse response = childAdhdStatisticsRedisService.get(
-                String.valueOf(game.getId()));
+            ChildADHDStatisticsResponse redisResponse = childAdhdStatisticsRedisService.get(String.valueOf(game.getId()));
 
-            if (response != null) {
-                responses.add(response);
+            if (redisResponse != null) {
+                responses.add(redisResponse);
             }
             else {
-                responses.add(getChildADHDStatistics(game.getId(), childrenId));
+                ChildADHDStatisticsResponse response = getChildADHDStatistics(game.getId(), childrenId);
+                childAdhdStatisticsRedisService.save(String.valueOf(game.getId()), response);
+                responses.add(response);
             }
         }
 
@@ -164,9 +168,9 @@ public class AdminGameService {
         User children = userRepository.getById(childrenId);
         Game game = gameRepository.getById(gameId);
 
-        ChildADHDStatisticsResponse response = childAdhdStatisticsRedisService.get(String.valueOf(game.getId()));
-        if (response != null) {
-            return response;
+        ChildADHDStatisticsResponse redisResponse = childAdhdStatisticsRedisService.get(String.valueOf(game.getId()));
+        if (redisResponse != null) {
+            return redisResponse;
         }
 
         final int maxScore;
@@ -227,8 +231,10 @@ public class AdminGameService {
         double totalScore = convertedImpulse + convertedConcentration;
 
         ADHDStatus result = evaluateStatus(totalScore);
+        ChildADHDStatisticsResponse response = ChildADHDStatisticsResponse.from(convertedImpulse, convertedConcentration, result);
+        childAdhdStatisticsRedisService.save(String.valueOf(game.getId()), response);
 
-        return ChildADHDStatisticsResponse.from(convertedImpulse, convertedConcentration, result);
+        return response;
     }
 
     private boolean isGazeStatus(String status) {
