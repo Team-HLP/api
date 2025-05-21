@@ -53,6 +53,8 @@ public class AdminGameService {
     private final MeteoriteDestructionRepository meteoriteDestructionRepository;
     private final MoleCatchRepository moleCatchRepository;
     private final AdminGameRepository adminGameRepository;
+    private final GameStatisticsRedisService gameStatisticsRedisService;
+    private final ChildAdhdStatisticsRedisService childAdhdStatisticsRedisService;
     private final UserRepository userRepository;
     private final BioDataReader bioDataReader;
 
@@ -139,7 +141,15 @@ public class AdminGameService {
         List<ChildADHDStatisticsResponse> responses = new ArrayList<>();
 
         for (Game game : games) {
-            responses.add(getChildADHDStatistics(game.getId(), childrenId));
+            ChildADHDStatisticsResponse response = childAdhdStatisticsRedisService.get(
+                String.valueOf(game.getId()));
+
+            if (response != null) {
+                responses.add(response);
+            }
+            else {
+                responses.add(getChildADHDStatistics(game.getId(), childrenId));
+            }
         }
 
         return responses;
@@ -148,6 +158,11 @@ public class AdminGameService {
     public ChildADHDStatisticsResponse getChildADHDStatistics(Integer gameId, Integer childrenId) {
         User children = userRepository.getById(childrenId);
         Game game = gameRepository.getById(gameId);
+
+        ChildADHDStatisticsResponse response = childAdhdStatisticsRedisService.get(String.valueOf(game.getId()));
+        if (response != null) {
+            return response;
+        }
 
         final int maxScore;
         if (game.getGameCategory() == GameCategory.METEORITE_DESTRUCTION) {
