@@ -54,6 +54,7 @@ public class AdminGameService {
     private final MoleCatchRepository moleCatchRepository;
     private final AdminGameRepository adminGameRepository;
     private final GameStatisticsRedisService gameStatisticsRedisService;
+    private final AdminGameDetailRedisService adminGameDetailRedisService;
     private final ChildAdhdStatisticsRedisService childAdhdStatisticsRedisService;
     private final UserRepository userRepository;
     private final BioDataReader bioDataReader;
@@ -82,6 +83,10 @@ public class AdminGameService {
     public AdminGameDetailResponse getGame(Integer userId, Integer gameId) {
         User user = userRepository.getById(userId);
         Game game = adminGameRepository.getByIdAndUserId(gameId, user.getId());
+        AdminGameDetailResponse response = adminGameDetailRedisService.get(String.valueOf(game.getId()));
+        if (response != null) {
+            return response;
+        }
 
         BioData bioData = bioDataReader.readBioData(gameId, user.getId());
 
