@@ -133,7 +133,7 @@ public class GuardianController implements GuardianApi {
         @PathVariable(name = "childrenId") Integer childrenId,
         @GuardianAuth Integer guardianId
     ) {
-        List<ChildADHDStatisticsResponse> response = guardianService.getChildADHDStatistics(guardianId, childrenId);
+        List<ChildADHDStatisticsResponse> response = guardianService.getChildADHDStatistics(childrenId, guardianId);
         return ResponseEntity.ok(response);
     }
 }
