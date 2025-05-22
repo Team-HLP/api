@@ -197,4 +197,19 @@ public interface GuardianApi {
         @PathVariable(name = "gameId") Integer gameId,
         @GuardianAuth Integer guardianId
     );
+
+    @ApiResponses(
+        value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+        }
+    )
+    @Operation(summary = "자녀 ADHD 통계 리스트 조회")
+    @GetMapping("/children/{childrenId}/statistics")
+    ResponseEntity<List<ChildADHDStatisticsResponse>> getChildADHDStatistics(
+        @PathVariable(name = "childrenId") Integer childrenId,
+        @GuardianAuth Integer guardianId
+    );
 }

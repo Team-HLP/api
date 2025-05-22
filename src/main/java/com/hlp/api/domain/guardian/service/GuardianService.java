@@ -221,6 +221,18 @@ public class GuardianService {
         return responses;
     }
 
+    public List<ChildADHDStatisticsResponse> getChildADHDStatistics(Integer childrenId, Integer guardianId) {
+        List<Game> games = gameRepository.findAllByUserId(childrenId);
+        List<ChildADHDStatisticsResponse> responses = new ArrayList<>();
+
+        for (Game game : games) {
+            ChildADHDStatisticsResponse response = getChildADHDStatistics(game.getId(), childrenId, guardianId);
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
     // TODO. 캐싱 추가
     public ChildADHDStatisticsResponse getChildADHDStatistics(Integer gameId, Integer childrenId, Integer guardianId) {
         Guardian guardian = guardianRepository.getById(guardianId);

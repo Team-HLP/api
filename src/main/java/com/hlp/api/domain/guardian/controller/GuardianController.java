@@ -127,4 +127,13 @@ public class GuardianController implements GuardianApi {
         ChildADHDStatisticsResponse response = guardianService.getChildADHDStatistics(gameId, childrenId, guardianId);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/children/{childrenId}/statistics")
+    public ResponseEntity<List<ChildADHDStatisticsResponse>> getChildADHDStatistics(
+        @PathVariable(name = "childrenId") Integer childrenId,
+        @GuardianAuth Integer guardianId
+    ) {
+        List<ChildADHDStatisticsResponse> response = guardianService.getChildADHDStatistics(guardianId, childrenId);
+        return ResponseEntity.ok(response);
+    }
 }
